@@ -11,8 +11,8 @@ Si Modrinth demande d'en mettre en avant : Utility, Social, Equipment (dans cet 
 
 POSSIBLE PLUS TARD
 ------------------
-[ ] Decoration   — quand les blocs étendus (textures et blocs créés par les joueurs) seront actifs ;
-                   aujourd'hui cette fonction est encore « en préparation »
+[ ] Decoration   — possible depuis la 1.1.0 : blocs étendus en forme d'escalier, de dalle et de muret ;
+                   (active quand le serveur accorde les formes : réglage sage-blocs-link)
 
 À NE PAS COCHER (le mod ne fait pas ça, ou c'est le serveur qui le fait)
 ------------------------------------------------------------------------

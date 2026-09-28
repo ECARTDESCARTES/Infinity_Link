@@ -18,7 +18,7 @@
   - **Preloading**: content published on the server is downloaded in the background, checked (size and hash) and cached for future sessions.
   - **Upload**: `/lk envoyer <file>` sends a file from your drop folder (`.minecraft/laconia/depot`) to the server.
   - **16×16 editor**: `/lk editeur` opens a small pixel editor (16-color palette, brush, eraser) to draw a texture, save it as PNG and send it.
-- **Extended blocks (in preparation)**: the mod prepares 100,000 extra block slots for future server-added blocks. Not active yet.
+- **Extended blocks and shapes** (1.1.0): 100,000 extra block slots for server-added blocks, with **stair**, **slab** and **wall** shapes that have exact collision, outline and model. The server grants them to ∞link 1.1.0 clients; a client without the mod sees a vanilla block of the same shape.
 - **Server-driven HUD and keys**: the server can show information in the top-left corner of the screen and respond to some of your keys.
 - **Quiet log**: your `latest.log` is no longer flooded with warnings. On every resource reload, the 100,000 reserve slots without a model are summed up in a single line, instead of about 1.7 million warnings (148 MB measured). Other missing models are still reported.
 

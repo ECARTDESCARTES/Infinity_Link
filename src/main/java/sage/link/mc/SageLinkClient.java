@@ -18,6 +18,9 @@ public final class SageLinkClient implements ClientModInitializer {
             Bridge.STATE.tabs.on = Bridge.STATE.tabsCapable;
             Bridge.STATE.tabsSink = sage.link.mc.tabs.SageTabs.SINK;
             Bridge.STATE.assetsSink = sage.link.mc.assets.AssetsLink.INSTANCE; // capacité « assets » (doc 30 §9.3)
+            // capacité « formes » (1.1.0) : seulement si le stock de réserve est enregistré (sinon aucun état étendu n'existe)
+            Bridge.STATE.formesSink = sage.link.mc.blocks.SageShapes.INSTANCE;
+            Bridge.STATE.formesCapable = sage.link.mc.blocks.SageStock.registered();
             // Parade aux plantages du client 26.3 sous Windows (pile des Worker-Main qui ne peut plus grandir, MC-103) :
             // la JVM doit pré-engager toute la pile de chaque fil. On le vérifie et on le signale sans jamais bloquer.
             java.util.List<String> args = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments();

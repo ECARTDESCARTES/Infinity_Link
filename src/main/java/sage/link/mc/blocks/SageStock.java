@@ -37,6 +37,7 @@ public final class SageStock {
         String hash=HexFormat.of().formatHex(digest.digest());
         if(Block.BLOCK_STATE_REGISTRY.size()!=BlocksSpec.TOTAL||!hash.equals(BlocksSpec.SHA1)) throw new IllegalStateException("Stock partiel ou ordre incompatible : "+hash);
         complete=true;
+        sage.link.mc.Bridge.STATE.formesCapable=true; // capacité « formes » (1.1.0) : états de réserve présents
         var obs=sage.link.mc.Bridge.STATE.blocks;
         obs.stock=BlocksSpec.STOCK; obs.empreinte=hash;
         System.out.println("[sage_link] blocs : 6250 blocs, 100000 etats, base=35723, empreinte="+hash+", ms="+(System.nanoTime()-start)/1_000_000);

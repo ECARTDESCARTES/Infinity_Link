@@ -77,7 +77,7 @@ def main():
         (d/'sage/link/core').mkdir(parents=True,exist_ok=True)
         (d/'sage/link/core/version.txt').write_text(version.split('+')[0])
     quick='--quick' in sys.argv
-    pure=['CodecTest','TabsCodecTest','AssetsCodecTest','AssetsClientTest','LodMesherTest','LodPoolTest','BlocksViewTest','Armures3dTest']
+    pure=['CodecTest','TabsCodecTest','AssetsCodecTest','AssetsClientTest','LodMesherTest','LodPoolTest','BlocksViewTest','Armures3dTest','FormesTest']
     compile_java(list((ROOT/'src/main/java/sage/link/core').rglob('*.java'))+[ROOT/'test'/ (n+'.java') for n in pure],tests,cp)
     for name in (['BlocksViewTest'] if quick else pure): run([JDK/'bin/java.exe','-Dstdout.encoding=UTF-8','-cp',tests,name])
     if os.environ.get('LOD_REPLAY'):

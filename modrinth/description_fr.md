@@ -18,7 +18,7 @@
   - **Préchargement** : les contenus publiés sur le serveur sont téléchargés en arrière-plan, vérifiés (taille et empreinte) puis gardés en cache pour les prochaines connexions.
   - **Envoi** : `/lk envoyer <fichier>` envoie au serveur un fichier de ton dossier de dépôt (`.minecraft/laconia/depot`).
   - **Éditeur 16×16** : `/lk editeur` ouvre un petit éditeur de pixels (palette de 16 couleurs, pinceau, gomme) pour dessiner une texture, l'enregistrer en PNG et l'envoyer.
-- **Blocs étendus (en préparation)** : le mod prépare 100 000 emplacements de blocs supplémentaires pour de futurs blocs ajoutés par le serveur. Cette fonction n'est pas encore active.
+- **Blocs étendus et formes** (1.1.0) : 100 000 emplacements de blocs supplémentaires pour les blocs ajoutés par le serveur, avec des formes d'**escalier**, de **dalle** et de **muret** à collision, contour et modèle exacts. Le serveur les accorde aux clients ∞link 1.1.0 ; un client sans le mod voit un bloc vanilla de même forme.
 - **HUD et touches pilotés par le serveur** : le serveur peut afficher des informations en haut à gauche de l'écran et réagir à certaines touches de ton clavier.
 - **Journal léger** : ton fichier `latest.log` n'est plus inondé d'avertissements. À chaque rechargement des ressources, les 100 000 emplacements de réserve sans modèle sont résumés en une seule ligne, au lieu d'environ 1,7 million d'avertissements (148 Mo mesurés). Les autres modèles manquants restent signalés.
 

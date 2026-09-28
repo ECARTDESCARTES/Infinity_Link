@@ -60,6 +60,10 @@ public final class LinkState {
     public final AssetsMsg.Status assets = new AssetsMsg.Status();
     /** Branchement mc de la capacité « assets » (préchargement, table SGB2, verdicts) ; null = observation seule. */
     public volatile sage.link.core.assets.AssetsClient.Sink assetsSink;
+    // capacité « formes » (1.1.0, lot Ph4g-link-formes) : annoncée si les blocs de réserve sont enregistrés
+    public volatile boolean formesCapable;
+    public volatile FormesSgb2.Sink formesSink;
+    public volatile int formesTables = 0, formesEtats = 0;
 
     public Phase phase() { return phase; }
     public long rx() { return rx.get(); }
@@ -67,6 +71,9 @@ public final class LinkState {
     public long rejets() { return rejets.get(); }
 
     private void reset() {
+        FormesSgb2.Sink fs = formesSink;
+        if (fs != null) fs.clear();
+        formesTables = 0; formesEtats = 0;
         phase = Phase.OFF;
         proto = Msg.PROTO;
         server = "";
@@ -86,10 +93,11 @@ public final class LinkState {
 
     /** Capacités du hello : OUR_CAPS, plus « tabs » si les onglets sont enregistrés (tabsCapable). */
     public List<String> ourCaps() {
-        if (!tabsCapable && !assetsCapable) return OUR_CAPS;
+        if (!tabsCapable && !assetsCapable && !formesCapable) return OUR_CAPS;
         List<String> c = new ArrayList<>(OUR_CAPS);
         if (tabsCapable) c.add(TabsMsg.CAP_TABS);
         if (assetsCapable) c.add(AssetsMsg.CAP_ASSETS);
+        if (formesCapable) c.add(FormesSgb2.CAP_FORMES);
         return List.copyOf(c);
     }
 
@@ -127,6 +135,7 @@ public final class LinkState {
                 case Msg.LOD_FORGET -> ok = applyLodForget(Msg.LodForget.decode(data));
                 case TabsMsg.TABS -> ok = applyTabs(data);
                 case AssetsMsg.ASSETS_OFFER, AssetsMsg.BLOCKS_DELTA, AssetsMsg.UPLOAD_RESULT, AssetsMsg.DRAFT_PREVIEW -> ok = applyAssets(path, data);
+                case FormesSgb2.FORMES -> ok = applyFormes(data);
                 default -> { reject("message inconnu : sage:" + path); return; }
             }
             if (ok) rx.incrementAndGet();
@@ -162,6 +171,20 @@ public final class LinkState {
     private boolean applyLodForget(Msg.LodForget f) {
         if (phase != Phase.CONNECTED || lodView == 0) { reject("lod_forget sans lod_view"); return false; }
         lod.forget(f);
+        return true;
+    }
+
+    /** Connecté et capacité « formes » accordée par le manifeste. */
+    public boolean formesOn() { return phase == Phase.CONNECTED && caps.contains(FormesSgb2.CAP_FORMES); }
+
+    /** sage:link/formes : table SGB2 complète décodée ici (Java pur), appliquée aux blocs de réserve par formesSink. */
+    private boolean applyFormes(byte[] data) {
+        if (!formesOn()) { reject("formes sans capacite formes"); return false; }
+        FormesSgb2.Table t = FormesSgb2.decode(data);
+        formesTables++;
+        formesEtats = t.etats().size();
+        FormesSgb2.Sink s = formesSink;
+        if (s != null) s.apply(t);
         return true;
     }
 
