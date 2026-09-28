@@ -1,0 +1,5 @@
+dist/
+build/
+test/blocks-evidence/
+*.jar
+*.class

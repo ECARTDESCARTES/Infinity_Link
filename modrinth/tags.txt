@@ -1,0 +1,41 @@
+ÉTIQUETTES (CATÉGORIES) MODRINTH POUR ∞link (Infinity_Link)
+============================================================
+
+À COCHER (recommandées)
+-----------------------
+[x] Utility      — rendu lointain natif, onglets créatifs par mod, HUD et touches pilotés par le serveur
+[x] Social       — créations des joueurs partagées sur le serveur (préchargement, envoi, éditeur 16×16)
+[x] Equipment    — armures 3D des mods affichées sur les joueurs, supports d'armure et mobs
+
+Si Modrinth demande d'en mettre en avant : Utility, Social, Equipment (dans cet ordre).
+
+POSSIBLE PLUS TARD
+------------------
+[ ] Decoration   — quand les blocs étendus (textures et blocs créés par les joueurs) seront actifs ;
+                   aujourd'hui cette fonction est encore « en préparation »
+
+À NE PAS COCHER (le mod ne fait pas ça, ou c'est le serveur qui le fait)
+------------------------------------------------------------------------
+[ ] Adventure        — aucun contenu d'aventure dans le mod
+[ ] Cursed           — sans objet
+[ ] Economy          — l'économie est gérée par le serveur, pas par le mod
+[ ] Food             — la nourriture est gérée par le serveur
+[ ] Game Mechanics   — le mod ne change pas les règles du jeu ; il affiche ce que le serveur envoie
+[ ] Library          — ce n'est pas une bibliothèque pour d'autres mods
+[ ] Magic            — sans objet
+[ ] Management       — pas d'outil d'administration dans le mod
+[ ] Minigame         — sans objet
+[ ] Mobs             — le mod n'ajoute pas de créatures (il dessine seulement leurs armures 3D)
+[ ] Optimization     — le rendu lointain a un plafond de mémoire vidéo, mais le mod n'est pas un mod d'optimisation
+[ ] Storage          — sans objet
+[ ] Technology       — les machines des mods sont gérées par le serveur
+[ ] Transportation   — les trains et véhicules sont gérés par le serveur
+[ ] World Generation — la génération du monde est faite par le serveur
+
+RAPPEL DES AUTRES CHAMPS (voir fiche.md)
+----------------------------------------
+Environnement : client requis, serveur non pris en charge
+Chargeur      : Fabric
+Version du jeu: 26.3
+Licence       : Mozilla Public License 2.0
+Code source   : https://github.com/ECARTDESCARTES/Infinity_Link

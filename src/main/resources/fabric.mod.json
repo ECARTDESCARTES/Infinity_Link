@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "sage_link",
+  "version": "1.0.0+26.3",
+  "name": "Infinity_Link",
+  "description": "∞link (anciennement SAGE Link) : mod client du serveur ∞SMP — rendu lointain, onglets créatifs par mod, armures 3D, assets des joueurs, HUD et touches pilotés par le serveur. Sans effet sur un autre serveur.",
+  "authors": [
+    "ECARTDESCARTES"
+  ],
+  "license": "MPL-2.0",
+  "icon": "assets/sage_link/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "sage.link.mc.SageLinkClient"
+    ]
+  },
+  "mixins": [
+    "sage_link.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.0",
+    "minecraft": "26.3"
+  }
+}

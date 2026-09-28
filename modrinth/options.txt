@@ -1,0 +1,46 @@
+OPTIONS MODRINTH À COCHER POUR ∞link (Infinity_Link) — version 1.0.0
+====================================================================
+
+[x] Contains AI-generated content (contenu généré par IA)            → À COCHER
+    Le code du mod, le logo, la bannière et les textes de la page ont été produits
+    en grande partie par des agents IA (Claude, et d'autres modèles pour une partie
+    du code d'origine). Modrinth demande de le signaler quand l'IA a eu un rôle
+    important, ce qui est le cas ici.
+
+[ ] Contains generative AI functionality (fonctions d'IA générative)  → NE PAS COCHER
+    Le mod n'utilise aucune IA en jeu. L'éditeur 16×16 est un dessin pixel par
+    pixel fait par le joueur.
+
+[ ] Contains advertisements (publicités)                              → NE PAS COCHER
+    Le mod n'affiche aucune publicité ni promotion. Le lien vers le serveur ∞SMP
+    sur la page du projet n'est pas concerné.
+
+[ ] Contains paid features (fonctions payantes)                       → NE PAS COCHER
+    Rien ne se débloque avec de l'argent réel. La monnaie affichée en jeu (solde)
+    est une monnaie du serveur, pas un paiement.
+
+[ ] Contains telemetry (télémétrie)                                   → NE PAS COCHER
+    Le mod n'envoie aucune donnée d'usage à l'auteur ni à un tiers. Il échange
+    seulement avec le serveur sur lequel le joueur se connecte, pour jouer :
+    distance du rendu lointain, état du préchargement et des onglets, touches
+    pilotées par le serveur, et les fichiers que le joueur envoie lui-même avec
+    /lk envoyer. Sur un autre serveur, il n'envoie qu'un message de présentation
+    ignoré. Tout est décrit dans la section « Confidentialité » de la page.
+
+[ ] Contains derivative content (contenu dérivé)                      → NE PAS COCHER
+    Le mod n'est pas un fork et ne reprend pas le code d'un autre projet. Les
+    textures et modèles des mods affichés en jeu ne sont pas dans le jar : c'est
+    le serveur qui les fournit.
+
+[ ] Photosensitivity warning (photosensibilité)                       → NE PAS COCHER
+    Aucune lumière clignotante ni motif stroboscopique.
+
+[ ] External system interactions (interactions avec le système)       → NE PAS COCHER
+    Le mod ne lit et n'écrit que dans le dossier du jeu (.minecraft) :
+    config/sage_link.properties, le cache sage_link/cache et le dossier de dépôt
+    laconia/depot. Il ne touche à rien d'autre sur l'ordinateur.
+
+[ ] Archive project (archiver le projet)                              → NE PAS COCHER
+    Le mod est activement développé.
+
+RÉSUMÉ : cocher UNIQUEMENT « Contains AI-generated content ».
