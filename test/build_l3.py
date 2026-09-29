@@ -74,11 +74,11 @@ def main():
     cp=os.pathsep.join(str(p) for p in dependencies())
     classes=BUILD/'classes'; tests=BUILD/'tests'
     for d in [classes,tests]:
-        (d/'sage/link/core').mkdir(parents=True,exist_ok=True)
-        (d/'sage/link/core/version.txt').write_text(version.split('+')[0])
+        (d/'infinitylink/core').mkdir(parents=True,exist_ok=True)
+        (d/'infinitylink/core/version.txt').write_text(version.split('+')[0])
     quick='--quick' in sys.argv
     pure=['CodecTest','TabsCodecTest','AssetsCodecTest','AssetsClientTest','LodMesherTest','LodPoolTest','BlocksViewTest','Armures3dTest','FormesTest']
-    compile_java(list((ROOT/'src/main/java/sage/link/core').rglob('*.java'))+[ROOT/'test'/ (n+'.java') for n in pure],tests,cp)
+    compile_java(list((ROOT/'src/main/java/infinitylink/core').rglob('*.java'))+[ROOT/'test'/ (n+'.java') for n in pure],tests,cp)
     for name in (['BlocksViewTest'] if quick else pure): run([JDK/'bin/java.exe','-Dstdout.encoding=UTF-8','-cp',tests,name])
     if os.environ.get('LOD_REPLAY'):
         compile_java([ROOT/'test/LodReplayTest.java'],tests,cp+os.pathsep+str(tests))
@@ -89,10 +89,10 @@ def main():
     compile_java([ROOT/'test/TabsE2E.java',ROOT/'test/BlocksMinecraftCodecTest.java',ROOT/'test/BlocksMixinLauncher.java'],tests,full)
     for name,args in ([] if quick else [('TabsE2E',['test/ref'])]):
         run([JDK/'bin/java.exe','-Xmx2g','-Dstdout.encoding=UTF-8','-Dstderr.encoding=UTF-8','-cp',full,name]+args)
-    jar=ROOT/'dist'/('sage-link-'+version+'.jar'); jar.parent.mkdir(exist_ok=True)
+    jar=ROOT/'dist'/('infinitylink-'+version+'.jar'); jar.parent.mkdir(exist_ok=True)
     run([JDK/'bin/jar.exe','--create','--file',jar,'-C',classes,'.','-C',ROOT/'src/main/resources','.'])
     game=BUILD/'headless';game.mkdir(exist_ok=True)
-    for flags in [[],['-Dsage.link.blocks=off']]:
+    for flags in [[],['-Dinfinitylink.blocks=off']]:
         run([JDK/'bin/java.exe','-Xmx2g','-Djava.awt.headless=true','-Dfabric.skipMcProvider=false',
             '-Dfabric.addMods='+str(jar),'-Dfabric.log.disableAnsi=true','-Dstdout.encoding=UTF-8','-Dstderr.encoding=UTF-8']+flags+
             ['-cp',cp+os.pathsep+str(tests),'BlocksMixinLauncher',game,tests])

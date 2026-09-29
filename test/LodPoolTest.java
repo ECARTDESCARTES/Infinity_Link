@@ -1,7 +1,7 @@
-import sage.link.core.Msg;
-import sage.link.core.lod.LodMesher;
-import sage.link.core.lod.LodPool;
-import sage.link.core.lod.LodStore;
+import infinitylink.core.Msg;
+import infinitylink.core.lod.LodMesher;
+import infinitylink.core.lod.LodPool;
+import infinitylink.core.lod.LodStore;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

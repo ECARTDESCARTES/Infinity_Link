@@ -3,3 +3,5 @@ build/
 test/blocks-evidence/
 *.jar
 *.class
+logs/
+__pycache__/

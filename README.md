@@ -1,10 +1,10 @@
-# ∞link — Infinity_Link
+# InfinityLink
 
-![∞link](modrinth/banner.png)
+![InfinityLink](modrinth/banner.png)
 
 **Français** · [English](#english)
 
-Mod client Minecraft **26.3** (Fabric Loader, **sans Fabric API**) du serveur **∞SMP** — anciennement *SAGE Link*.
+Mod client Minecraft **26.3** (Fabric Loader, **sans Fabric API**) du serveur **∞SMP** — anciennement *SAGE Link*, puis *Infinity_Link* (∞link).
 Il relie le client au serveur : rendu lointain natif, onglets créatifs par mod, armures 3D des mods, créations des
 joueurs (préchargement, envoi et éditeur 16×16), HUD et touches pilotés par le serveur.
 Sur un autre serveur, le mod n'a aucun effet.
@@ -31,17 +31,21 @@ bash build.sh
 ```
 
 Le script actuel vise **Windows** (il appelle les exécutables `.exe` du JDK). Le build lance les tests en Java pur (`test/*Test.java`), vérifie par `javap` que chaque cible de mixin existe dans le
-jar client 26.3 (`test/mixin_targets.txt`), puis produit `dist/sage-link-<version>+26.3.jar`. L'identifiant technique du
-mod reste `sage_link` pour la compatibilité avec le serveur.
+jar client 26.3 (`test/mixin_targets.txt`), compile le mod, produit `dist/infinitylink-<version>+26.3.jar`, puis lance le jeu sans fenêtre (Knot) pour
+appliquer les vrais mixins. Depuis la 1.1.1, l'identifiant du mod est `infinitylink` ; il déclare `provides: sage_link`,
+si bien que Fabric charge InfinityLink et écarte un ancien `sage-link-*.jar` resté dans `mods/` (constaté avec Fabric
+Loader 0.19.5). Le protocole (canaux
+`sage:link/*`) ne change pas : le mod reste compatible avec tout serveur LACONIA.
 
 ## Organisation du code
 
 | dossier | contenu |
 |---|---|
-| `src/main/java/sage/link/core` | protocole, état, rendu lointain, assets, armures 3D : Java pur, testé sans Minecraft |
-| `src/main/java/sage/link/mc` | point d'entrée client, rendu, onglets, blocs, écran de l'éditeur |
-| `src/main/java/sage/link/mc/mixin` | mixins (noms Mojang, `remap = false`) |
+| `src/main/java/infinitylink/core` | protocole, état, rendu lointain, assets, armures 3D : Java pur, testé sans Minecraft |
+| `src/main/java/infinitylink/mc` | point d'entrée client, rendu, onglets, blocs, écran de l'éditeur |
+| `src/main/java/infinitylink/mc/mixin` | mixins (noms Mojang, `remap = false`) |
 | `src/main/resources` | `fabric.mod.json`, configuration des mixins, icône, licence |
+| `infinitylink/mc/Migration.java` | reprise, au premier lancement, des réglages et du cache de SAGE Link / Infinity_Link 1.x |
 | `test/` | tests et script de build ; `test/ref/` : trames de référence |
 | `modrinth/` | textes de la page Modrinth, logo, bannière |
 
@@ -54,7 +58,7 @@ avec son code source.
 
 ## English
 
-Client mod for Minecraft **26.3** (Fabric Loader, **no Fabric API**) for the **∞SMP** server — formerly *SAGE Link*.
+Client mod for Minecraft **26.3** (Fabric Loader, **no Fabric API**) for the **∞SMP** server — formerly *SAGE Link*, then *Infinity_Link* (∞link).
 It connects the client to the server: native distant rendering, per-mod creative tabs, 3D armor from mods, player-made
 content (preloading, upload and a 16×16 editor), and a server-driven HUD and key bindings.
 On any other server the mod has no effect.
@@ -76,7 +80,9 @@ bash build.sh
 ```
 
 The current script targets **Windows** (it calls the JDK `.exe` tools). The build runs the pure-Java tests, checks with `javap` that every mixin target exists in the 26.3 client jar, and
-writes `dist/sage-link-<version>+26.3.jar`. The technical mod id stays `sage_link` for server compatibility.
+builds the mod, writes `dist/infinitylink-<version>+26.3.jar`, then starts the game headless (Knot) to apply the real mixins.
+Since 1.1.1 the mod id is `infinitylink`; it declares `provides: sage_link`, so Fabric loads InfinityLink and skips an old
+`sage-link-*.jar` left in `mods/` (observed with Fabric Loader 0.19.5). The protocol (`sage:link/*` channels) is unchanged: the mod works with any LACONIA server.
 
 ### Contributing
 

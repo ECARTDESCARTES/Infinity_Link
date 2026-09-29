@@ -1,9 +1,9 @@
-import sage.link.core.AssetsMsg;
-import sage.link.core.LinkState;
-import sage.link.core.Msg;
-import sage.link.core.assets.AssetsClient;
-import sage.link.core.assets.PixelCanvas;
-import sage.link.core.assets.Png;
+import infinitylink.core.AssetsMsg;
+import infinitylink.core.LinkState;
+import infinitylink.core.Msg;
+import infinitylink.core.assets.AssetsClient;
+import infinitylink.core.assets.PixelCanvas;
+import infinitylink.core.assets.Png;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -101,7 +101,7 @@ public final class AssetsClientTest {
             if (b == null) throw new IOException("404");
             return b;
         };
-        Path cache = tmp.resolve("sage_link").resolve("cache");
+        Path cache = tmp.resolve("infinitylink").resolve("cache");
         List<AssetsMsg.Epoch> offer = List.of(new AssetsMsg.Epoch(1, AssetsMsg.sha1(packA), packA.length, "http://s/p/1.zip"),
             new AssetsMsg.Epoch(2, AssetsMsg.sha1(packB), packB.length, "http://s/p/2.zip"));
         AssetsMsg.Ready r = AssetsClient.preload(offer, f, cache);

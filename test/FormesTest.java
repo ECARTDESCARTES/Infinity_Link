@@ -1,5 +1,5 @@
-import sage.link.core.FormesSgb2;
-import sage.link.core.LinkState;
+import infinitylink.core.FormesSgb2;
+import infinitylink.core.LinkState;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;

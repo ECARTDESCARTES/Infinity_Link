@@ -1,5 +1,5 @@
-import sage.link.core.armor.Armures3dSpec;
-import sage.link.core.armor.Armures3dSpec.Entree;
+import infinitylink.core.armor.Armures3dSpec;
+import infinitylink.core.armor.Armures3dSpec.Entree;
 
 import java.util.List;
 import java.util.Map;

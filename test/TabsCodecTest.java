@@ -1,7 +1,7 @@
-import sage.link.core.LinkState;
-import sage.link.core.Msg;
-import sage.link.core.TabsMsg;
-import sage.link.core.Wire;
+import infinitylink.core.LinkState;
+import infinitylink.core.Msg;
+import infinitylink.core.TabsMsg;
+import infinitylink.core.Wire;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;

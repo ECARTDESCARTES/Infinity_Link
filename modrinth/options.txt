@@ -1,4 +1,4 @@
-OPTIONS MODRINTH À COCHER POUR ∞link (Infinity_Link) — version 1.0.0
+OPTIONS MODRINTH À COCHER POUR InfinityLink — version 1.1.1
 ====================================================================
 
 [x] Contains AI-generated content (contenu généré par IA)            → À COCHER
@@ -37,7 +37,7 @@ OPTIONS MODRINTH À COCHER POUR ∞link (Infinity_Link) — version 1.0.0
 
 [ ] External system interactions (interactions avec le système)       → NE PAS COCHER
     Le mod ne lit et n'écrit que dans le dossier du jeu (.minecraft) :
-    config/sage_link.properties, le cache sage_link/cache et le dossier de dépôt
+    config/infinitylink.properties, le cache infinitylink/cache et le dossier de dépôt
     laconia/depot. Il ne touche à rien d'autre sur l'ordinateur.
 
 [ ] Archive project (archiver le projet)                              → NE PAS COCHER

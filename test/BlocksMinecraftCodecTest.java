@@ -8,8 +8,8 @@ import net.minecraft.world.level.chunk.*;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import io.netty.buffer.Unpooled;
-import sage.link.mc.blocks.*;
-import sage.link.core.BlocksSpec;
+import infinitylink.mc.blocks.*;
+import infinitylink.core.BlocksSpec;
 import java.lang.reflect.Method;
 import net.minecraft.core.*;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -44,7 +44,7 @@ public final class BlocksMinecraftCodecTest {
         }
         long bootMillis=(System.nanoTime()-bootStart)/1_000_000;
         System.gc(); long heap=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
-        System.out.println("MESURE headless : boot_ms="+bootMillis+", heap_apres_gc="+heap+", stock_off="+"off".equals(System.getProperty("sage.link.blocks")));
+        System.out.println("MESURE headless : boot_ms="+bootMillis+", heap_apres_gc="+heap+", stock_off="+"off".equals(infinitylink.core.Props.get("blocks")));
         // Le chargement force l'application des mixins même pour les chemins non exécutés par le bootstrap.
         for(String c:List.of("world.level.chunk.PalettedContainerFactory","network.protocol.game.ClientboundBlockUpdatePacket",
             "network.protocol.game.ClientboundAddTransientBlockPacket","network.protocol.game.ClientboundSectionBlocksUpdatePacket",
@@ -56,14 +56,14 @@ public final class BlocksMinecraftCodecTest {
             Class<?> target=Class.forName("net.minecraft."+c,false,BlocksMinecraftCodecTest.class.getClassLoader());
             if(woven) check(Arrays.stream(target.getDeclaredMethods()).anyMatch(m->m.getName().contains("sage$")));
         }
-        if("off".equals(System.getProperty("sage.link.blocks"))) {
+        if("off".equals(infinitylink.core.Props.get("blocks"))) {
             check(Block.BLOCK_STATE_REGISTRY.size()==BlocksSpec.BASE);
             check(BlocksMode.forLevel()==Block.BLOCK_STATE_REGISTRY);
             check(BlocksEssai.verify(16,BlocksSpec.container(16))==4096);
             System.out.println("BlocksMinecraftCodecTest OFF : "+checks+" controles OK");return;
         }
         check(Block.BLOCK_STATE_REGISTRY.size()==BlocksSpec.TOTAL);
-        check(sage.link.mc.Bridge.STATE.blocks.empreinte.equals(BlocksSpec.SHA1));
+        check(infinitylink.mc.Bridge.STATE.blocks.empreinte.equals(BlocksSpec.SHA1));
         for(int i=0;i<BlocksSpec.STOCK;i++) {
             BlockState s=Block.BLOCK_STATE_REGISTRY.byId(BlocksSpec.BASE+i);
             check(s.getValue(SageBlock.S)==(i&15));
@@ -200,36 +200,37 @@ public final class BlocksMinecraftCodecTest {
         @Override public java.net.SocketAddress getRemoteAddress(){return new java.net.InetSocketAddress(address,port);}
         @Override public void send(net.minecraft.network.protocol.Packet<?> packet){
             var p=(net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket)packet;
-            reply=((sage.link.mc.SagePayload)p.payload()).data()[0];
+            reply=((infinitylink.mc.SagePayload)p.payload()).data()[0];
         }
     }
     static void probeChecks() throws Exception {
         Path config=net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDir();Files.createDirectories(config);
-        Path allow=config.resolve("sage_link_blocs_essai.properties");
+        Path allow=config.resolve("infinitylink_blocs_essai.properties");
         Files.writeString(allow,"adresse=127.0.0.1:25644\n");
-        System.setProperty("sage.blocs.essai","1");
+        System.setProperty("infinitylink.blocs.essai","1");
         var c=new ProbeConnection();
         check(BlocksEssai.allowed(c));c.port=25565;check(!BlocksEssai.allowed(c));c.port=25645;check(!BlocksEssai.allowed(c));
         c.port=25644;c.memory=true;check(!BlocksEssai.allowed(c));c.memory=false;c.address="192.0.2.1";check(!BlocksEssai.allowed(c));c.address="127.0.0.1";
-        System.clearProperty("sage.blocs.essai");check(!BlocksEssai.allowed(c));System.setProperty("sage.blocs.essai","1");
-        sage.link.mc.Bridge.STATE.beginHello("26.3");
+        System.clearProperty("infinitylink.blocs.essai");check(!BlocksEssai.allowed(c));
+        System.setProperty("sage.blocs.essai","1");check(BlocksEssai.allowed(c)); // ancien nom (SAGE Link) encore lu
+        infinitylink.mc.Bridge.STATE.beginHello("26.3");
         // Le contrat B1 exige le hello, pas l'ordre relatif du manifest et de l'offre.
-        check(sage.link.mc.Bridge.STATE.phase()==sage.link.core.LinkState.Phase.HELLO_SENT);
+        check(infinitylink.mc.Bridge.STATE.phase()==infinitylink.core.LinkState.Phase.HELLO_SENT);
         byte[] offer=HexFormat.of().parseHex("018b9702a08d061249cf91f0c06591ffb6b2ab7d6d8e98a6d29291a3");
         BlocksMode.begin(c);BlocksEssai.receive(c,"link/blocks_probe",offer);check(c.reply==0);
         for(int bits:new int[]{16,18}) {
-            byte[] data=BlocksSpec.container(bits);BlocksEssai.receive(c,"link/blocks_probe_data",new sage.link.core.Wire.Out().u8(bits).varInt(data.length).bytes(data).toBytes());
+            byte[] data=BlocksSpec.container(bits);BlocksEssai.receive(c,"link/blocks_probe_data",new infinitylink.core.Wire.Out().u8(bits).varInt(data.length).bytes(data).toBytes());
         }
-        var obs=sage.link.mc.Bridge.STATE.blocks;check(obs.bits16==4096&&obs.bits18==4096&&obs.probe.equals("ok"));check(BlocksMode.currentSize()==35723);
+        var obs=infinitylink.mc.Bridge.STATE.blocks;check(obs.bits16==4096&&obs.bits18==4096&&obs.probe.equals("ok"));check(BlocksMode.currentSize()==35723);
         BlocksEssai.receive(c,"link/blocks_probe",offer);check(c.reply==1);
         BlocksMode.begin(c);BlocksEssai.receive(c,"link/blocks_probe",offer);
-        byte[] data=BlocksSpec.container(18);BlocksEssai.receive(c,"link/blocks_probe_data",new sage.link.core.Wire.Out().u8(18).varInt(data.length).bytes(data).toBytes());
+        byte[] data=BlocksSpec.container(18);BlocksEssai.receive(c,"link/blocks_probe_data",new infinitylink.core.Wire.Out().u8(18).varInt(data.length).bytes(data).toBytes());
         check(obs.probe.equals("refuse"));check(BlocksMode.currentSize()==35723);
         BlocksMode.begin(c);BlocksEssai.receive(c,"link/blocks_probe",offer);
         var deadline=BlocksEssai.class.getDeclaredField("deadline");deadline.setAccessible(true);deadline.setLong(null,System.nanoTime()-1);BlocksEssai.tick();
         check(obs.probe.equals("delai"));check(BlocksMode.currentSize()==35723);
         BlocksMode.begin(c);BlocksMode.finish(c);c.reply=-1;BlocksEssai.receive(c,"link/blocks_probe",offer);check(c.reply==-1);
-        BlocksMode.disconnect(c);System.clearProperty("sage.blocs.essai");Files.delete(allow);
+        BlocksMode.disconnect(c);System.clearProperty("sage.blocs.essai");System.clearProperty("infinitylink.blocs.essai");Files.delete(allow);
     }
     static void regionChecks(Path base) throws Exception {
         for(int version:new int[]{1,2,3,4})for(boolean external:new boolean[]{false,true})for(boolean stock:new boolean[]{false,true}) {

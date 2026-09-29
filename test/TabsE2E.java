@@ -13,9 +13,9 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemLore;
-import sage.link.core.TabsMsg;
-import sage.link.mc.tabs.SageTabs;
-import sage.link.mc.tabs.TabPages;
+import infinitylink.core.TabsMsg;
+import infinitylink.mc.tabs.SageTabs;
+import infinitylink.mc.tabs.TabPages;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

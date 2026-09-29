@@ -1,18 +1,18 @@
-# Fiche Modrinth : ∞link (Infinity_Link)
+# Fiche Modrinth : InfinityLink
 
 Champs à recopier dans les paramètres du projet Modrinth.
 
 ## Nom
 
-∞link (Infinity_Link)
+InfinityLink
 
 ## Résumé court (≤ 256 caractères)
 
-**FR** (212 caractères) :
-> Mod client du serveur ∞SMP : rendu lointain natif, onglets créatifs par mod, armures 3D, créations de joueurs et éditeur 16×16. Fabric, sans Fabric API. Sans effet sur les autres serveurs. Anciennement SAGE Link.
+**FR** (232 caractères) :
+> Mod client du serveur ∞SMP : rendu lointain natif, onglets créatifs par mod, armures 3D, créations de joueurs et éditeur 16×16. Fabric, sans Fabric API. Sans effet sur les autres serveurs. Anciennement SAGE Link, puis Infinity_Link.
 
-**EN** (201 caractères) :
-> Client mod for the ∞SMP server: native distant rendering, per-mod creative tabs, 3D armor, player-made content and a 16×16 editor. Fabric, no Fabric API. No effect on other servers. Formerly SAGE Link.
+**EN** (221 caractères) :
+> Client mod for the ∞SMP server: native distant rendering, per-mod creative tabs, 3D armor, player-made content and a 16×16 editor. Fabric, no Fabric API. No effect on other servers. Formerly SAGE Link, then Infinity_Link.
 
 Modrinth n'accepte qu'un seul résumé : choisir la langue principale de la page.
 
@@ -64,4 +64,8 @@ Code source public : https://github.com/ECARTDESCARTES/Infinity_Link (à mettre 
 
 ## Note sur l'identifiant technique
 
-Le mod s'affiche désormais sous le nom ∞link (Infinity_Link), mais son identifiant technique reste `sage_link` (mod id Fabric, fichier `config/sage_link.properties`, dossier `.minecraft/sage_link/cache`). Il est conservé pour la compatibilité : les réglages et le cache existants restent valables. Le slug Modrinth `infinity_link` peut différer de cet identifiant sans conséquence.
+Depuis la 1.1.1, le mod s'appelle InfinityLink et son identifiant technique est `infinitylink` (mod id Fabric, fichier
+`config/infinitylink.properties`, dossier `.minecraft/infinitylink/cache`). Il déclare `provides: sage_link` : Fabric
+écarte un ancien `sage-link-*.jar` resté dans `mods/`. Au premier lancement, le mod reprend les réglages et le cache de
+SAGE Link / Infinity_Link 1.x. Le protocole (canaux `sage:link/*`) ne change pas. Le slug Modrinth `infinity_link` peut
+rester tel quel.

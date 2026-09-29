@@ -1,8 +1,8 @@
-import sage.link.core.Msg;
-import sage.link.core.Wire;
-import sage.link.core.lod.LodMesher;
-import sage.link.core.lod.LodStore;
-import sage.link.core.lod.LodWorker;
+import infinitylink.core.Msg;
+import infinitylink.core.Wire;
+import infinitylink.core.lod.LodMesher;
+import infinitylink.core.lod.LodStore;
+import infinitylink.core.lod.LodWorker;
 
 import java.io.DataInputStream;
 import java.io.EOFException;

@@ -1,7 +1,7 @@
-import sage.link.core.AssetsMsg;
-import sage.link.core.LinkState;
-import sage.link.core.Msg;
-import sage.link.core.Wire;
+import infinitylink.core.AssetsMsg;
+import infinitylink.core.LinkState;
+import infinitylink.core.Msg;
+import infinitylink.core.Wire;
 
 import java.util.Arrays;
 import java.util.HexFormat;

@@ -1,4 +1,4 @@
-import sage.link.core.*;
+import infinitylink.core.*;
 import java.util.*;
 public final class BlocksViewTest {
     static int checks;

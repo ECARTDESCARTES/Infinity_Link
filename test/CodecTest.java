@@ -1,7 +1,7 @@
-import sage.link.core.KeyMap;
-import sage.link.core.LinkState;
-import sage.link.core.Msg;
-import sage.link.core.Wire;
+import infinitylink.core.KeyMap;
+import infinitylink.core.LinkState;
+import infinitylink.core.Msg;
+import infinitylink.core.Wire;
 
 import java.util.HexFormat;
 import java.util.List;
@@ -114,9 +114,9 @@ public final class CodecTest {
         s.disconnected();
         check("deconnexion : lod oublie", s.lod.size() == 0 && s.lodViewSent() == 0 && !s.json().contains("\"lod\""), s.json());
         // clés du magasin : aller-retour signé
-        long k = sage.link.core.lod.LodStore.key(7, -123456, 98765);
-        check("cle lod aller-retour", sage.link.core.lod.LodStore.keyLevel(k) == 7 && sage.link.core.lod.LodStore.keyX(k) == -123456
-                && sage.link.core.lod.LodStore.keyZ(k) == 98765, Long.toHexString(k));
+        long k = infinitylink.core.lod.LodStore.key(7, -123456, 98765);
+        check("cle lod aller-retour", infinitylink.core.lod.LodStore.keyLevel(k) == 7 && infinitylink.core.lod.LodStore.keyX(k) == -123456
+                && infinitylink.core.lod.LodStore.keyZ(k) == 98765, Long.toHexString(k));
     }
 
     static void cubes() {

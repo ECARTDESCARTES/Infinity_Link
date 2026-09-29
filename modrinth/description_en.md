@@ -1,11 +1,11 @@
 <!-- Banner: replace the URL below with the URL of banner.png once it is uploaded to the Modrinth gallery (right-click the image > copy image address). -->
-![∞link banner](BANNER_URL)
+![InfinityLink banner](BANNER_URL)
 
-# ∞link (Infinity_Link)
+# InfinityLink
 
-**∞link** is the client mod for the **∞SMP** server: it lets the server talk directly to your game. You get native distant terrain rendering, per-mod creative tabs, 3D armor and content made by other players, with nothing to set up yourself.
+**InfinityLink** is the client mod for the **∞SMP** server: it lets the server talk directly to your game. You get native distant terrain rendering, per-mod creative tabs, 3D armor and content made by other players, with nothing to set up yourself.
 
-*Formerly SAGE Link.*
+*Formerly SAGE Link, then Infinity_Link (∞link).*
 
 ---
 
@@ -18,7 +18,7 @@
   - **Preloading**: content published on the server is downloaded in the background, checked (size and hash) and cached for future sessions.
   - **Upload**: `/lk envoyer <file>` sends a file from your drop folder (`.minecraft/laconia/depot`) to the server.
   - **16×16 editor**: `/lk editeur` opens a small pixel editor (16-color palette, brush, eraser) to draw a texture, save it as PNG and send it.
-- **Extended blocks and shapes** (1.1.0): 100,000 extra block slots for server-added blocks, with **stair**, **slab** and **wall** shapes that have exact collision, outline and model. The server grants them to ∞link 1.1.0 clients; a client without the mod sees a vanilla block of the same shape.
+- **Extended blocks and shapes** (1.1.0): 100,000 extra block slots for server-added blocks, with **stair**, **slab** and **wall** shapes that have exact collision, outline and model. The server grants them to InfinityLink 1.1.0 clients; a client without the mod sees a vanilla block of the same shape.
 - **Server-driven HUD and keys**: the server can show information in the top-left corner of the screen and respond to some of your keys.
 - **Quiet log**: your `latest.log` is no longer flooded with warnings. On every resource reload, the 100,000 reserve slots without a model are summed up in a single line, instead of about 1.7 million warnings (148 MB measured). Other missing models are still reported.
 
@@ -35,24 +35,24 @@ No special Java (JVM) arguments are needed.
 
 ## Compatibility
 
-∞link only does something on a server that speaks its protocol, such as ∞SMP. On a vanilla server or any other server, **it has no effect**. It sends a single greeting message, which the server ignores, and nothing else.
+InfinityLink only does something on a server that speaks its protocol, such as ∞SMP. On a vanilla server or any other server, **it has no effect**. It sends a single greeting message, which the server ignores, and nothing else.
 
 ## Installation
 
 **With Prism Launcher or MultiMC**
 1. Create a **Minecraft 26.3** instance.
 2. In *Edit instance > Version*, click *Install Fabric* and pick version 0.19.0 or newer.
-3. In the *Mods* tab, add the ∞link `.jar` file (or install it from Modrinth right inside the launcher).
+3. In the *Mods* tab, add the InfinityLink `.jar` file (or install it from Modrinth right inside the launcher).
 4. Start the instance and join the ∞SMP server.
 
 **With the official Minecraft launcher**
 1. Install **Fabric Loader** for Minecraft 26.3 with the Fabric installer (version 0.19.0 or newer).
-2. Put the ∞link `.jar` file in the `.minecraft/mods` folder (create it if it does not exist).
+2. Put the InfinityLink `.jar` file in the `.minecraft/mods` folder (create it if it does not exist).
 3. In the launcher, select the *fabric-loader-26.3* profile and start the game.
 
 ## Configuration
 
-The file `.minecraft/config/sage_link.properties` is created on first launch. Edit it with a text editor while the game is closed.
+The file `.minecraft/config/infinitylink.properties` is created on first launch. Edit it with a text editor while the game is closed.
 
 | Option | Default | Values | Purpose |
 |---|---|---|---|
@@ -87,7 +87,7 @@ These commands are handled by your game and are never sent to the server. Their 
   - files that **you** send with `/lk envoyer` or the editor's *Envoyer* button. Nothing is uploaded without your action.
 
 **What is downloaded, and from where**
-- Content published on the server, from the (http or https) addresses the server provides. Each file is checked (size and SHA-1 hash), then stored in `.minecraft/sage_link/cache`.
+- Content published on the server, from the (http or https) addresses the server provides. Each file is checked (size and SHA-1 hash), then stored in `.minecraft/infinitylink/cache`.
 
 ## FAQ
 
@@ -95,16 +95,16 @@ These commands are handled by your game and are never sent to the server. Their 
 No. You can join ∞SMP without it; you just won't get the features above.
 
 **Do I need Fabric API?**
-No. ∞link only needs Fabric Loader.
+No. InfinityLink only needs Fabric Loader.
 
 **Distant rendering makes my game lag. What can I do?**
-Lower `lod_view` or `lod_vram_mb` in `config/sage_link.properties`, or set `lod=false`.
+Lower `lod_view` or `lod_vram_mb` in `config/infinitylink.properties`, or set `lod=false`.
 
 **I don't like the 3D armor.**
-Set `armures_3d=false` in `config/sage_link.properties`.
+Set `armures_3d=false` in `config/infinitylink.properties`.
 
-**Why are the files still named `sage_link`?**
-The mod used to be called SAGE Link. The technical ID `sage_link` was kept so your settings and cache stay valid.
+**I had SAGE Link or Infinity_Link: what happens to my settings?**
+On first launch, InfinityLink copies `config/sage_link.properties` to `config/infinitylink.properties` and moves the cache `.minecraft/sage_link/cache` to `.minecraft/infinitylink/cache`. Nothing is deleted. If the old `sage-link-*.jar` is still in `mods/`, Fabric skips it and loads InfinityLink; you can remove it.
 
 **What if a feature crashes?**
 An error only turns off the feature involved (distant rendering, 3D armor, HUD or keys). The game keeps running. Distant rendering stays off until the end of the session, 3D armor until you change worlds.
@@ -121,8 +121,8 @@ An error only turns off the feature involved (distant rendering, 3D armor, HUD o
 - **Server address**: `∞.ecartdescartes.eu` *(remove this line if you do not want to publish it)*
 
 <!-- Icon: replace the URL with the URL of icon.png once it is uploaded to the Modrinth gallery (the project icon is also set in Settings > General). -->
-![∞link icon](ICON_URL)
+![InfinityLink icon](ICON_URL)
 
 ## License
 
-Infinity_Link is released under the **Mozilla Public License 2.0** (MPL-2.0): you may use it and include it in modpacks freely; any modified version of the mod's files must be redistributed under the same license, with its source code.
+InfinityLink is released under the **Mozilla Public License 2.0** (MPL-2.0): you may use it and include it in modpacks freely; any modified version of the mod's files must be redistributed under the same license, with its source code.
