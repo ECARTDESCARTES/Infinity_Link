@@ -80,3 +80,8 @@ invoke|net.minecraft.client.renderer.entity.LivingEntityRenderer|submit|net/mine
 # 0.3.3 : états de réserve des blocs étendus sans modèle, résumés en une ligne
 method|net.minecraft.client.resources.model.ModelManager|createBlockStateToModelDispatch|(Ljava/util/Map;Lnet/minecraft/client/renderer/block/dispatch/BlockStateModel;)Ljava/util/Map;
 method|net.minecraft.client.resources.model.ModelManager|lambda$createBlockStateToModelDispatch$0|(Ljava/util/Map;Lnet/minecraft/client/renderer/block/dispatch/BlockStateModel;Lnet/minecraft/world/level/block/state/BlockState;)V
+# 1.1.2 : touches dans Options > Commandes et leurs libellés
+method|net.minecraft.client.Options|load|()V
+field|net.minecraft.client.Options|keyMappings|[Lnet/minecraft/client/KeyMapping;
+method|net.minecraft.client.resources.language.ClientLanguage|getOrDefault|(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+method|net.minecraft.client.resources.language.ClientLanguage|has|(Ljava/lang/String;)Z

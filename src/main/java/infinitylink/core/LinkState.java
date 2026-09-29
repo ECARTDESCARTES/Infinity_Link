@@ -63,6 +63,9 @@ public final class LinkState {
     // capacité « formes » (1.1.0, lot Ph4g-link-formes) : annoncée si les blocs de réserve sont enregistrés
     public volatile boolean formesCapable;
     public volatile FormesSgb2.Sink formesSink;
+    // capacité « voix » (1.1.2) : annoncée si voiceCapable (vrai sauf -Dinfinitylink.voix=off), messages remis à voiceSink
+    public volatile boolean voiceCapable;
+    public volatile java.util.function.BiConsumer<String, byte[]> voiceSink;
     public volatile int formesTables = 0, formesEtats = 0;
 
     public Phase phase() { return phase; }
@@ -93,16 +96,26 @@ public final class LinkState {
 
     /** Capacités du hello : OUR_CAPS, plus « tabs » si les onglets sont enregistrés (tabsCapable). */
     public List<String> ourCaps() {
-        if (!tabsCapable && !assetsCapable && !formesCapable) return OUR_CAPS;
+        if (!tabsCapable && !assetsCapable && !formesCapable && !voiceCapable) return OUR_CAPS;
         List<String> c = new ArrayList<>(OUR_CAPS);
         if (tabsCapable) c.add(TabsMsg.CAP_TABS);
         if (assetsCapable) c.add(AssetsMsg.CAP_ASSETS);
         if (formesCapable) c.add(FormesSgb2.CAP_FORMES);
+        if (voiceCapable) c.add(infinitylink.core.voice.VoiceMsg.CAP_VOIX);
         return List.copyOf(c);
     }
 
     /** Connecté et capacité « assets » accordée par le manifeste (§11 ; absente = vanilla, §5). */
     public boolean assetsOn() { return phase == Phase.CONNECTED && caps.contains(AssetsMsg.CAP_ASSETS); }
+
+    /** Connecté et capacité « voix » accordée par le manifeste. */
+    public boolean voiceOn() { return phase == Phase.CONNECTED && caps.contains(infinitylink.core.voice.VoiceMsg.CAP_VOIX); }
+
+    /** Une ligne lisible pour le chat (touche « état ») : phase, serveur, capacités, compteurs. */
+    public String summary() {
+        return "InfinityLink " + VERSION + " : " + phase.name().toLowerCase() + (server.isEmpty() ? "" : " sur " + server)
+            + ", capacites " + caps + ", recus " + rx.get() + ", envoyes " + tx.get() + ", rejets " + rejets.get();
+    }
 
     /** Connecté et capacité « tabs » accordée par le manifeste. */
     public boolean tabsOn() { return phase == Phase.CONNECTED && caps.contains(TabsMsg.CAP_TABS); }
@@ -136,6 +149,7 @@ public final class LinkState {
                 case TabsMsg.TABS -> ok = applyTabs(data);
                 case AssetsMsg.ASSETS_OFFER, AssetsMsg.BLOCKS_DELTA, AssetsMsg.UPLOAD_RESULT, AssetsMsg.DRAFT_PREVIEW -> ok = applyAssets(path, data);
                 case FormesSgb2.FORMES -> ok = applyFormes(data);
+                case infinitylink.core.voice.VoiceMsg.VOICE, infinitylink.core.voice.VoiceMsg.VOICE_PEERS -> ok = applyVoice(path, data);
                 default -> { reject("message inconnu : sage:" + path); return; }
             }
             if (ok) rx.incrementAndGet();
@@ -176,6 +190,13 @@ public final class LinkState {
 
     /** Connecté et capacité « formes » accordée par le manifeste. */
     public boolean formesOn() { return phase == Phase.CONNECTED && caps.contains(FormesSgb2.CAP_FORMES); }
+
+    private boolean applyVoice(String path, byte[] data) {
+        if (!voiceOn()) { reject(path + " sans capacite voix"); return false; }
+        java.util.function.BiConsumer<String, byte[]> s = voiceSink;
+        if (s != null) s.accept(path, data);
+        return true;
+    }
 
     /** sage:link/formes : table SGB2 complète décodée ici (Java pur), appliquée aux blocs de réserve par formesSink. */
     private boolean applyFormes(byte[] data) {

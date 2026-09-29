@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "infinitylink",
-  "version": "1.1.1+26.3",
+  "version": "1.1.2+26.3",
   "name": "InfinityLink",
-  "description": "InfinityLink (anciennement SAGE Link, puis Infinity_Link) : mod client du serveur ∞SMP — rendu lointain, onglets créatifs par mod, armures 3D, assets des joueurs, HUD et touches pilotés par le serveur. Sans effet sur un autre serveur.",
+  "description": "InfinityLink (anciennement SAGE Link, puis Infinity_Link) : mod client du serveur ∞SMP — rendu lointain, onglets créatifs par mod, armures 3D, assets des joueurs, chat vocal de proximité, HUD et touches pilotés par le serveur. Sans effet sur un autre serveur.",
   "authors": [
     "ECARTDESCARTES"
   ],

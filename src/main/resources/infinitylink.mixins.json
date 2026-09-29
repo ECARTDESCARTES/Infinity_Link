@@ -38,7 +38,9 @@
     "HumanoidArmorLayerMixin",
     "CustomHeadLayerMixin",
     "ReloadableResourceManagerMixin",
-    "ModelManagerMixin"
+    "ModelManagerMixin",
+    "OptionsMixin",
+    "ClientLanguageMixin"
   ],
   "injectors": {
     "defaultRequire": 1

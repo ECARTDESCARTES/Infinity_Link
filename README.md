@@ -4,10 +4,18 @@
 
 **Français** · [English](#english)
 
-Mod client Minecraft **26.3** (Fabric Loader, **sans Fabric API**) du serveur **∞SMP** — anciennement *SAGE Link*, puis *Infinity_Link* (∞link).
+Mod client Minecraft **26.3** et **26.4-snapshot-2** (Fabric Loader 0.19.5, **sans Fabric API**) du serveur **∞SMP** — anciennement *SAGE Link*, puis *Infinity_Link* (∞link).
 Il relie le client au serveur : rendu lointain natif, onglets créatifs par mod, armures 3D des mods, créations des
-joueurs (préchargement, envoi et éditeur 16×16), HUD et touches pilotés par le serveur.
+joueurs (préchargement, envoi et éditeur 16×16), chat vocal de proximité (1.1.2), HUD et touches pilotés par le serveur.
 Sur un autre serveur, le mod n'a aucun effet.
+
+**Chat vocal et touches (1.1.2).** Façon Simple Voice Chat : parler en appuyant (Verr. Maj) ou activation vocale,
+chuchotement, groupes, micro coupé (M), sourdine (N), menu vocal (V), parole de groupe (G), icônes (H). Le son est
+spatialisé en stéréo. Les trames sont chiffrées en AES-128-GCM sous une clé par joueur, remise par la capacité Link
+« voix » après connexion au compte. Codec IMA-ADPCM 16 kHz, sans bibliothèque native. S'y ajoutent des touches pour le
+rendu lointain, l'éditeur 16×16, le HUD et l'état du mod. Toutes se règlent dans Options > Commandes (`Keys.java`,
+`OptionsMixin`, libellés FR/EN par `ClientLanguageMixin`). Relais côté serveur : `libs/sage_voix`, `crates/sage_server/src/voix.rs`.
+Messages Link : `crates/sage_proto/src/link_voix.rs`. Banc de bout en bout : `tools/voix_test.py`.
 
 - Page Modrinth : https://modrinth.com/project/infinity_link
 - Licence : [Mozilla Public License 2.0](LICENSE) (voir aussi [NOTICE](NOTICE))
@@ -30,7 +38,11 @@ MC_META="/chemin/vers/le/lanceur/meta/net.minecraft/26.3.json" \
 bash build.sh
 ```
 
-Le script actuel vise **Windows** (il appelle les exécutables `.exe` du JDK). Le build lance les tests en Java pur (`test/*Test.java`), vérifie par `javap` que chaque cible de mixin existe dans le
+Le script actuel vise **Windows** (il appelle les exécutables `.exe` du JDK). `bash build.sh --mc 26.4-snapshot-2`
+produit le jar du snapshot. Les sources 26.3 y sont portées par `port/26.4-snapshot-2/port.json` : chaque remplacement
+est vérifié, cinq mixins de codec de blocs sont remplacés par `BlockStateCodecMixin`, et la dépendance Fabric vise
+`26.4-alpha.2`, forme normalisée par Fabric Loader. Le build rejoue alors les mêmes tests, les cibles `javap` et le
+démarrage sans fenêtre contre le jar client du snapshot. Le build lance les tests en Java pur (`test/*Test.java`), vérifie par `javap` que chaque cible de mixin existe dans le
 jar client 26.3 (`test/mixin_targets.txt`), compile le mod, produit `dist/infinitylink-<version>+26.3.jar`, puis lance le jeu sans fenêtre (Knot) pour
 appliquer les vrais mixins. Depuis la 1.1.1, l'identifiant du mod est `infinitylink` ; il déclare `provides: sage_link`,
 si bien que Fabric charge InfinityLink et écarte un ancien `sage-link-*.jar` resté dans `mods/` (constaté avec Fabric
@@ -44,6 +56,8 @@ Loader 0.19.5). Le protocole (canaux
 | `src/main/java/infinitylink/core` | protocole, état, rendu lointain, assets, armures 3D : Java pur, testé sans Minecraft |
 | `src/main/java/infinitylink/mc` | point d'entrée client, rendu, onglets, blocs, écran de l'éditeur |
 | `src/main/java/infinitylink/mc/mixin` | mixins (noms Mojang, `remap = false`) |
+| `src/main/java/infinitylink/core/voice`, `mc/voice`, `mc/Keys.java` | chat vocal (trames, codec, gigue, spatialisation ; micro, réseau, écran) et touches (1.1.2) |
+| `port/<version>/` | portage des sources vers une autre version de Minecraft (`build.sh --mc <version>`) |
 | `src/main/resources` | `fabric.mod.json`, configuration des mixins, icône, licence |
 | `infinitylink/mc/Migration.java` | reprise, au premier lancement, des réglages et du cache de SAGE Link / Infinity_Link 1.x |
 | `test/` | tests et script de build ; `test/ref/` : trames de référence |
@@ -58,10 +72,17 @@ avec son code source.
 
 ## English
 
-Client mod for Minecraft **26.3** (Fabric Loader, **no Fabric API**) for the **∞SMP** server — formerly *SAGE Link*, then *Infinity_Link* (∞link).
+Client mod for Minecraft **26.3** and **26.4-snapshot-2** (Fabric Loader 0.19.5, **no Fabric API**) for the **∞SMP** server — formerly *SAGE Link*, then *Infinity_Link* (∞link).
 It connects the client to the server: native distant rendering, per-mod creative tabs, 3D armor from mods, player-made
-content (preloading, upload and a 16×16 editor), and a server-driven HUD and key bindings.
+content (preloading, upload and a 16×16 editor), proximity voice chat (1.1.2), and a server-driven HUD and key bindings.
 On any other server the mod has no effect.
+
+**Voice chat and keys (1.1.2).** In the spirit of Simple Voice Chat: push to talk (Caps Lock) or voice activation,
+whisper, groups, mute (M), deafen (N), voice menu (V), group talk (G), icons (H). Sound is spatialized in stereo.
+Frames are encrypted with AES-128-GCM under a per-player key handed over by the "voix" Link capability after account
+login. IMA-ADPCM 16 kHz codec, no native library. There are also keys for distant rendering, the 16×16 editor, the HUD
+and the mod status. All keys are set in Options > Controls. `bash build.sh --mc 26.4-snapshot-2` builds the snapshot jar
+from the same sources, ported by `port/26.4-snapshot-2/port.json`.
 
 - Modrinth: https://modrinth.com/project/infinity_link
 - License: [Mozilla Public License 2.0](LICENSE) (see also [NOTICE](NOTICE))

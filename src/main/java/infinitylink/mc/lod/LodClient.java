@@ -331,4 +331,14 @@ public final class LodClient {
     }
 
     public static boolean disabled() { return disabled; }
+
+    /** Touche « rendu lointain » (1.1.2) : coupe (lod_view 0, le serveur oublie) ou rétablit le lointain pour la session ;
+     *  l'option du fichier n'est pas modifiée. Rend l'état obtenu. */
+    public static boolean toggle() {
+        optionOn = !optionOn && optionView > 0;
+        Minecraft mc = Minecraft.getInstance();
+        ClientPacketListener conn = mc.getConnection();
+        if (!optionOn && sent && conn != null) { send(conn, 0); sent = false; farBlocks = 0; store().clear(); }
+        return optionOn;
+    }
 }

@@ -1,0 +1,114 @@
+{
+  "commentaire": "Portage 26.3 -> 26.4-snapshot-2 d'InfinityLink : appliqué par test/build_l3.py --mc 26.4-snapshot-2 à une copie des sources ; chaque remplacement doit trouver au moins 'min' occurrences, sinon le build échoue.",
+  "fabric_minecraft": "26.4-alpha.2",
+  "regex": [
+    {
+      "fichiers": "**/*.java",
+      "motif": "com\\.mojang\\.renderpearl\\.api\\.pipeline\\.(RenderPipeline|ShaderSource)\\b",
+      "par": "com.mojang.blaze3d.pipeline.\\1",
+      "min": 2
+    },
+    {
+      "fichiers": "**/*.java",
+      "motif": "com\\.mojang\\.renderpearl\\.api\\.vertex\\.",
+      "par": "com.mojang.blaze3d.vertex.",
+      "min": 1
+    },
+    {
+      "fichiers": "infinitylink/mc/mixin/CreativeModeInventoryScreenMixin.java",
+      "motif": "(sage\\$(?:prev|next))\\.visible = ([^;]+);",
+      "par": "\\1.setVisible(\\2);",
+      "min": 2
+    },
+    {
+      "fichiers": "infinitylink/mc/mixin/LevelRendererMixin.java",
+      "motif": "Lorg/joml/Vector4f;ZZ\\)V",
+      "par": "Z)V",
+      "min": 1
+    },
+    {
+      "fichiers": "infinitylink/mc/mixin/LevelRendererMixin.java",
+      "motif": "GpuBufferSlice fog,\\s*Vector4f fogColor, boolean b2, boolean b3, CallbackInfo ci",
+      "par": "GpuBufferSlice fog, boolean b2, CallbackInfo ci",
+      "min": 1
+    },
+    {
+      "fichiers": "infinitylink/mc/mixin/FogRendererMixin.java",
+      "motif": "ClientLevel;\\)Lnet/minecraft/client/renderer/fog/FogData;",
+      "par": "ClientLevel;Z)Lnet/minecraft/client/renderer/fog/FogData;",
+      "min": 1
+    },
+    {
+      "fichiers": "infinitylink/mc/mixin/FogRendererMixin.java",
+      "motif": "ClientLevel level,\\s*CallbackInfoReturnable<FogData> cir",
+      "par": "ClientLevel level, boolean b, CallbackInfoReturnable<FogData> cir",
+      "min": 1
+    },
+    {
+      "fichiers": "infinitylink/mc/lod/LodRenderer.java",
+      "motif": "device\\.compilePipeline\\(",
+      "par": "new com.mojang.blaze3d.pipeline.PipelineBuilder(device).compilePipeline(",
+      "min": 2
+    },
+    {
+      "fichiers": "test/BlocksMinecraftCodecTest.java",
+      "motif": "ByteBufCodecs\\.idMapper\\(view\\)",
+      "par": "ByteBufCodecs.idMapper(view::byIdOrThrow, view::getIdOrThrow)",
+      "min": 1
+    },
+    {
+      "fichiers": "infinitylink/mc/mixin/PalettedContainerFactoryMixin.java",
+      "motif": "method=\"create\"",
+      "par": "method=\"create(Lnet/minecraft/core/Registry;)Lnet/minecraft/world/level/chunk/PalettedContainerFactory;\"",
+      "min": 1
+    },
+    {
+      "fichiers": "infinitylink/mc/mixin/SoloStateCodecMixin.java",
+      "motif": "method=\"create\"",
+      "par": "method=\"create(Lnet/minecraft/core/Registry;)Lnet/minecraft/world/level/chunk/PalettedContainerFactory;\"",
+      "min": 1
+    },
+    {
+      "fichiers": "test/BlocksMinecraftCodecTest.java",
+      "motif": "\"network\\.protocol\\.game\\.ClientboundBlockUpdatePacket\",\\s*\"network\\.protocol\\.game\\.ClientboundAddTransientBlockPacket\",",
+      "par": "\"world.level.block.Block\",",
+      "min": 1
+    },
+    {
+      "fichiers": "test/BlocksMinecraftCodecTest.java",
+      "motif": "\"core\\.particles\\.BlockParticleOption\",",
+      "par": "",
+      "min": 1
+    }
+  ],
+  "supprimer": [
+    "infinitylink/mc/mixin/BlockUpdatePacketMixin.java",
+    "infinitylink/mc/mixin/AddTransientBlockPacketMixin.java",
+    "infinitylink/mc/mixin/BlockParticleOptionMixin.java",
+    "infinitylink/mc/mixin/EntityDataSerializersMixin.java"
+  ],
+  "mixins_retires": [
+    "BlockUpdatePacketMixin",
+    "AddTransientBlockPacketMixin",
+    "BlockParticleOptionMixin",
+    "EntityDataSerializersMixin"
+  ],
+  "mixins_ajoutes": [
+    "BlockStateCodecMixin"
+  ],
+  "cibles_retirees": [
+    "method|net.minecraft.client.renderer.LevelRenderer|render|",
+    "method|net.minecraft.client.renderer.fog.FogRenderer|setupFog|",
+    "method|net.minecraft.network.codec.ByteBufCodecs|idMapper|",
+    "invoke|net.minecraft.network.protocol.game.ClientboundAddTransientBlockPacket|",
+    "invoke|net.minecraft.core.particles.BlockParticleOption|",
+    "invoke|net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket|",
+    "invoke|net.minecraft.network.syncher.EntityDataSerializers|"
+  ],
+  "cibles_ajoutees": [
+    "method|net.minecraft.client.renderer.LevelRenderer|render|(Lcom/mojang/blaze3d/resource/GraphicsResourceAllocator;ZLnet/minecraft/client/renderer/state/level/CameraRenderState;Lcom/mojang/renderpearl/api/buffers/GpuBufferSlice;Z)V",
+    "method|net.minecraft.client.renderer.fog.FogRenderer|setupFog|(Lnet/minecraft/client/Camera;ILnet/minecraft/client/DeltaTracker;FLnet/minecraft/client/multiplayer/ClientLevel;Z)Lnet/minecraft/client/renderer/fog/FogData;",
+    "method|net.minecraft.network.codec.ByteBufCodecs|idMapper|(Ljava/util/function/IntFunction;Ljava/util/function/ToIntFunction;)Lnet/minecraft/network/codec/StreamCodec;",
+    "invoke|net.minecraft.world.level.block.Block|<clinit>|net/minecraft/network/codec/ByteBufCodecs.idMapper:(Ljava/util/function/IntFunction;Ljava/util/function/ToIntFunction;)Lnet/minecraft/network/codec/StreamCodec;"
+  ]
+}

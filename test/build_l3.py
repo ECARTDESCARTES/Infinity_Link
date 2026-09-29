@@ -7,6 +7,43 @@ LIBS=Path(os.environ.get('MC_LIBS','E:/multimc/MultiMC/libraries'))
 CLIENT=LIBS/'com/mojang/minecraft/26.3/minecraft-26.3-client.jar'
 META=Path(os.environ.get('MC_META','E:/multimc/MultiMC/meta/net.minecraft/26.3.json'))
 BUILD=ROOT/'build/l3'
+MC='26.3'
+SRC=ROOT/'src/main/java'; RES=ROOT/'src/main/resources'; TARGETS=ROOT/'test/mixin_targets.txt'; TESTDIR=ROOT/'test'
+def select_mc(version):
+    """1.1.2 : build pour une autre version de Minecraft (--mc) : jar client et méta de cette version, sources et
+    ressources portées depuis 26.3 par port/<version>/port.json (remplacements vérifiés, fichiers ajoutés ou retirés)."""
+    global MC,CLIENT,META,BUILD,SRC,RES,TARGETS,TESTDIR
+    import shutil,glob as _g
+    MC=version
+    CLIENT=LIBS/'com/mojang/minecraft'/version/('minecraft-'+version+'-client.jar')
+    META=Path(os.environ.get('MC_META_DIR','E:/multimc/MultiMC/meta/net.minecraft'))/(version+'.json')
+    BUILD=ROOT/('build/l3-'+version)
+    cfg=json.loads((ROOT/'port'/version/'port.json').read_text(encoding='utf8'))
+    base=BUILD/'port'
+    if base.exists(): shutil.rmtree(base)
+    SRC=base/'java'; RES=base/'resources'
+    shutil.copytree(ROOT/'src/main/java',SRC); shutil.copytree(ROOT/'src/main/resources',RES)
+    TESTDIR=base/'test'; TESTDIR.mkdir(parents=True)
+    for t in (ROOT/'test').glob('*.java'): shutil.copy(t,TESTDIR/t.name)
+    for rel in cfg.get('supprimer',[]): (SRC/rel).unlink()
+    extra=ROOT/'port'/version/'java'
+    if extra.exists(): shutil.copytree(extra,SRC,dirs_exist_ok=True)
+    for r in cfg.get('regex',[]):
+        n=0
+        for f in sorted(base.glob(r['fichiers']) if r['fichiers'].startswith('test/') else SRC.glob(r['fichiers'])):
+            t=f.read_text(encoding='utf8'); t2,k=re.subn(r['motif'],r['par'],t)
+            if k: f.write_text(t2,encoding='utf8'); n+=k
+        if n<r['min']: raise SystemExit('portage '+version+' : motif '+r['motif']+' trouve '+str(n)+' fois (min '+str(r['min'])+')')
+    mj=RES/'infinitylink.mixins.json'; m=json.loads(mj.read_text(encoding='utf8'))
+    for x in cfg.get('mixins_retires',[]): m['client'].remove(x)
+    m['client']+=cfg.get('mixins_ajoutes',[])
+    mj.write_text(json.dumps(m,indent=2),encoding='utf8')
+    fj=RES/'fabric.mod.json'; f=json.loads(fj.read_text(encoding='utf8'))
+    f['version']=f['version'].split('+')[0]+'+'+version; f['depends']['minecraft']=cfg.get('fabric_minecraft',version)
+    fj.write_text(json.dumps(f,indent=2,ensure_ascii=False),encoding='utf8')
+    lines=[l for l in (ROOT/'test/mixin_targets.txt').read_text(encoding='utf8').splitlines() if not any(l.startswith(x) for x in cfg.get('cibles_retirees',[]))]
+    TARGETS=base/'mixin_targets.txt'; TARGETS.write_text(chr(10).join(lines+cfg.get('cibles_ajoutees',[]))+chr(10),encoding='utf8')
+    print('Portage '+version+' : '+str(len(cfg.get('regex',[])))+' remplacements, '+str(len(cfg.get('supprimer',[])))+' fichiers retires',flush=True)
 def run(args, **kw):
     temp=BUILD/'tmp';temp.mkdir(parents=True,exist_ok=True)
     env=os.environ.copy(); env['TEMP']=env['TMP']=str(temp)
@@ -43,7 +80,7 @@ def javap(cls):
     return run([JDK/'bin/javap.exe','-p','-s','-c','-classpath',CLIENT,cls],capture_output=True,text=True,encoding='utf8').stdout
 def targets():
     cache={}; n=0
-    for line in (ROOT/'test/mixin_targets.txt').read_text(encoding='utf8').splitlines():
+    for line in TARGETS.read_text(encoding='utf8').splitlines():
         if not line or line.startswith('#'): continue
         kind,cls,name,desc=line.split('|'); n+=1
         if cls not in cache: cache[cls]=javap(cls)
@@ -70,31 +107,33 @@ def main():
     os.chdir(ROOT); BUILD.mkdir(parents=True,exist_ok=True)
     (ROOT/'test/blocks-evidence').mkdir(exist_ok=True)
     (ROOT/'test/blocks-evidence/run.log').write_text('',encoding='utf8')
-    version=json.loads((ROOT/'src/main/resources/fabric.mod.json').read_text())['version']
+    if '--mc' in sys.argv and sys.argv[sys.argv.index('--mc')+1]!='26.3': select_mc(sys.argv[sys.argv.index('--mc')+1])
+    BUILD.mkdir(parents=True,exist_ok=True)
+    version=json.loads((RES/'fabric.mod.json').read_text(encoding='utf8'))['version']
     cp=os.pathsep.join(str(p) for p in dependencies())
     classes=BUILD/'classes'; tests=BUILD/'tests'
     for d in [classes,tests]:
         (d/'infinitylink/core').mkdir(parents=True,exist_ok=True)
         (d/'infinitylink/core/version.txt').write_text(version.split('+')[0])
     quick='--quick' in sys.argv
-    pure=['CodecTest','TabsCodecTest','AssetsCodecTest','AssetsClientTest','LodMesherTest','LodPoolTest','BlocksViewTest','Armures3dTest','FormesTest']
-    compile_java(list((ROOT/'src/main/java/infinitylink/core').rglob('*.java'))+[ROOT/'test'/ (n+'.java') for n in pure],tests,cp)
+    pure=['CodecTest','TabsCodecTest','AssetsCodecTest','AssetsClientTest','LodMesherTest','LodPoolTest','BlocksViewTest','Armures3dTest','FormesTest','VoiceTest']
+    compile_java(list((SRC/'infinitylink/core').rglob('*.java'))+[TESTDIR/(n+'.java') for n in pure],tests,cp)
     for name in (['BlocksViewTest'] if quick else pure): run([JDK/'bin/java.exe','-Dstdout.encoding=UTF-8','-cp',tests,name])
     if os.environ.get('LOD_REPLAY'):
         compile_java([ROOT/'test/LodReplayTest.java'],tests,cp+os.pathsep+str(tests))
         run([JDK/'bin/java.exe','-Xmx2g','-Dstdout.encoding=UTF-8','-cp',tests,'LodReplayTest',os.environ['LOD_REPLAY']])
     if not quick: targets()
-    compile_java(list((ROOT/'src/main/java').rglob('*.java')),classes,cp)
+    compile_java(list(SRC.rglob('*.java')),classes,cp)
     full=cp+os.pathsep+str(classes)+os.pathsep+str(tests)
-    compile_java([ROOT/'test/TabsE2E.java',ROOT/'test/BlocksMinecraftCodecTest.java',ROOT/'test/BlocksMixinLauncher.java'],tests,full)
+    compile_java([TESTDIR/'TabsE2E.java',TESTDIR/'BlocksMinecraftCodecTest.java',TESTDIR/'BlocksMixinLauncher.java'],tests,full)
     for name,args in ([] if quick else [('TabsE2E',['test/ref'])]):
         run([JDK/'bin/java.exe','-Xmx2g','-Dstdout.encoding=UTF-8','-Dstderr.encoding=UTF-8','-cp',full,name]+args)
     jar=ROOT/'dist'/('infinitylink-'+version+'.jar'); jar.parent.mkdir(exist_ok=True)
-    run([JDK/'bin/jar.exe','--create','--file',jar,'-C',classes,'.','-C',ROOT/'src/main/resources','.'])
+    run([JDK/'bin/jar.exe','--create','--file',jar,'-C',classes,'.','-C',RES,'.'])
     game=BUILD/'headless';game.mkdir(exist_ok=True)
     for flags in [[],['-Dinfinitylink.blocks=off']]:
         run([JDK/'bin/java.exe','-Xmx2g','-Djava.awt.headless=true','-Dfabric.skipMcProvider=false',
             '-Dfabric.addMods='+str(jar),'-Dfabric.log.disableAnsi=true','-Dstdout.encoding=UTF-8','-Dstderr.encoding=UTF-8']+flags+
-            ['-cp',cp+os.pathsep+str(tests),'BlocksMixinLauncher',game,tests])
+            ['-Dinfinitylink.mc='+MC,'-cp',cp+os.pathsep+str(tests),'BlocksMixinLauncher',game,tests])
     print(str(jar),jar.stat().st_size,'octets SHA256',hashlib.sha256(jar.read_bytes()).hexdigest())
 if __name__=='__main__': main()

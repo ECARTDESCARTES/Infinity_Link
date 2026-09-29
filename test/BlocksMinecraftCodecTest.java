@@ -52,9 +52,9 @@ public final class BlocksMinecraftCodecTest {
             "world.level.chunk.LevelChunk","world.level.chunk.ProtoChunk","world.level.storage.LevelStorageSource",
             "world.level.levelgen.flat.FlatLayerInfo","client.multiplayer.ClientConfigurationPacketListenerImpl",
             "client.renderer.entity.layers.HumanoidArmorLayer","client.renderer.entity.layers.CustomHeadLayer",
-            "server.packs.resources.ReloadableResourceManager")) {
+            "server.packs.resources.ReloadableResourceManager","client.Options","client.resources.language.ClientLanguage")) {
             Class<?> target=Class.forName("net.minecraft."+c,false,BlocksMinecraftCodecTest.class.getClassLoader());
-            if(woven) check(Arrays.stream(target.getDeclaredMethods()).anyMatch(m->m.getName().contains("sage$")));
+            if(woven) check(Arrays.stream(target.getDeclaredMethods()).anyMatch(m->m.getName().contains("sage$")||m.getName().contains("infinitylink$")));
         }
         if("off".equals(infinitylink.core.Props.get("blocks"))) {
             check(Block.BLOCK_STATE_REGISTRY.size()==BlocksSpec.BASE);

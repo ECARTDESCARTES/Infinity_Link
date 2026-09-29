@@ -20,13 +20,14 @@ public final class Bridge {
 
     public static final LinkState STATE = new LinkState();
     public static final String MC_VERSION = "26.3";
-    private static volatile boolean hudOff, keysOff;
+    private static volatile boolean hudOff, keysOff, inputOff;
 
     /** Fin de ClientHandshakePacketListenerImpl.handleLoginFinished : après minecraft:brand et client_information. */
     public static void sendHello(Connection connection) {
         try {
             STATE.tabsCapable = infinitylink.mc.tabs.SageTabs.registered(); // « tabs » seulement si les onglets existent
             STATE.assetsCapable = !"off".equals(infinitylink.core.Props.get("assets")); // « assets » (§11), coupable
+            STATE.voiceCapable = !"off".equals(infinitylink.core.Props.get("voix")); // « voix » (1.1.2), coupable
             byte[] b = STATE.beginHello(MC_VERSION);
             connection.send(new ServerboundCustomPayloadPacket(SagePayload.out(Msg.HELLO, b)));
             STATE.sent();
@@ -52,12 +53,17 @@ public final class Bridge {
         try { infinitylink.mc.lod.LodClient.onDisconnect(); } catch (Throwable t) { STATE.error("deconnexion lod", t); }
         try { infinitylink.mc.tabs.SageTabs.clear(); } catch (Throwable t) { STATE.error("deconnexion onglets", t); }
         try { infinitylink.mc.assets.AssetsLink.INSTANCE.table.clear(); } catch (Throwable t) { STATE.error("deconnexion assets", t); }
+        try { infinitylink.mc.voice.VoiceClient.onDisconnect(); } catch (Throwable t) { STATE.error("deconnexion voix", t); }
     }
 
     /** Tête de Minecraft.tick() : interroge les touches du manifeste, aucun écran ouvert, envoie les transitions. */
     public static void tick(Minecraft mc) {
         infinitylink.mc.blocks.BlocksEssai.tick();
         infinitylink.mc.lod.LodClient.tick(mc); // attrape tout lui-même
+        if (!inputOff) {
+            try { Keys.tick(mc); infinitylink.mc.voice.VoiceClient.tick(mc); }
+            catch (Throwable t) { inputOff = true; STATE.error("touches du mod et voix (desactivees)", t); }
+        }
         if (keysOff || !STATE.wantsKeys()) return;
         try {
             ClientPacketListener conn = mc.getConnection();
@@ -85,8 +91,9 @@ public final class Bridge {
             if (!STATE.pretouch && !mc.debugEntries.isOverlayVisible()) {
                 g.text(mc.font, "InfinityLink : ajoutez -XX:+UnlockDiagnosticVMOptions -XX:+AlwaysPreTouchStacks (risque de plantage)", 4, g.guiHeight() - 60, 0xFFFF5555, true);
             }
-            if (list.isEmpty()) return;
             if (mc.debugEntries.isOverlayVisible()) return; // F3 occupe le coin
+            drawVoice(g, mc);
+            if (list.isEmpty() || Keys.hudHidden) return;
             Font font = mc.font;
             int x = 4, y = 4, n = 0;
             for (Msg.HudEntry e : list) {
@@ -107,6 +114,21 @@ public final class Bridge {
         } catch (Throwable t) {
             hudOff = true;
             STATE.error("hud (desactive)", t);
+        }
+    }
+
+    /** Chat vocal (1.1.2) : état du micro et joueurs qui parlent, coin bas gauche au-dessus du chat ; masqué par la
+     *  touche « icônes ». */
+    private static void drawVoice(GuiGraphicsExtractor g, Minecraft mc) {
+        if (infinitylink.mc.voice.VoiceClient.hideIcons || !infinitylink.mc.voice.VoiceClient.running()) return;
+        Font font = mc.font;
+        int y = g.guiHeight() - 90;
+        boolean talking = infinitylink.mc.voice.VoiceClient.talking();
+        g.text(font, infinitylink.mc.voice.VoiceClient.micLine(), 4, y, talking ? 0xFF55FF55 : 0xFFB0B0B0, true);
+        for (String n : infinitylink.mc.voice.VoiceClient.speakers()) {
+            y -= font.lineHeight + 1;
+            if (y < 20) break;
+            g.text(font, "> " + n, 4, y, 0xFFFFFF55, true);
         }
     }
 }
