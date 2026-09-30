@@ -12,29 +12,33 @@ import java.util.Map;
 
 /** Touches d'InfinityLink 1.1.2, réglables dans Options > Commandes (enregistrées dans options.txt comme les touches
  *  vanilla, OptionsMixin) : chat vocal façon Simple Voice Chat et raccourcis du mod. Codes = scancodes SDL3 de 26.3
- *  (InputConstants.KEY_*), -1 = sans touche par défaut. Libellés FR/EN fournis par ClientLanguageMixin. */
+ *  (InputConstants.KEY_*), AUCUNE = sans touche par défaut (InputConstants.UNKNOWN, valeur 0 : jamais -1, que
+ *  KeyMapping.setAll passerait à InputConstants.isKeyDown et qui ferait planter le jeu à la reprise du focus). Libellés FR/EN fournis par ClientLanguageMixin. */
 public final class Keys {
     private Keys() {}
 
     public static final KeyMapping.Category VOIX = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("infinitylink", "voix"));
     public static final KeyMapping.Category GENERAL = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("infinitylink", "general"));
 
+    /** « Sans touche » : la valeur de InputConstants.UNKNOWN (0 en 26.x), seule valeur que KeyMapping ignore. */
+    public static final int AUCUNE = InputConstants.UNKNOWN.getValue();
+
     private static KeyMapping k(String id, int code, KeyMapping.Category c) {
         return new KeyMapping("key.infinitylink." + id, InputConstants.Type.KEYBOARD, code, c);
     }
 
     public static final KeyMapping PARLER = k("parler", InputConstants.KEY_CAPSLOCK, VOIX);
-    public static final KeyMapping CHUCHOTER = k("chuchoter", -1, VOIX);
+    public static final KeyMapping CHUCHOTER = k("chuchoter", AUCUNE, VOIX);
     public static final KeyMapping MICRO = k("micro", InputConstants.KEY_M, VOIX);
     public static final KeyMapping SOURDINE = k("sourdine", InputConstants.KEY_N, VOIX);
     public static final KeyMapping MENU = k("menu_voix", InputConstants.KEY_V, VOIX);
     public static final KeyMapping GROUPE = k("groupe", InputConstants.KEY_G, VOIX);
-    public static final KeyMapping MODE = k("mode_voix", -1, VOIX);
+    public static final KeyMapping MODE = k("mode_voix", AUCUNE, VOIX);
     public static final KeyMapping ICONES = k("icones", InputConstants.KEY_H, VOIX);
-    public static final KeyMapping LOINTAIN = k("lointain", -1, GENERAL);
-    public static final KeyMapping EDITEUR = k("editeur", -1, GENERAL);
-    public static final KeyMapping HUD = k("hud", -1, GENERAL);
-    public static final KeyMapping ETAT = k("etat", -1, GENERAL);
+    public static final KeyMapping LOINTAIN = k("lointain", AUCUNE, GENERAL);
+    public static final KeyMapping EDITEUR = k("editeur", AUCUNE, GENERAL);
+    public static final KeyMapping HUD = k("hud", AUCUNE, GENERAL);
+    public static final KeyMapping ETAT = k("etat", AUCUNE, GENERAL);
 
     public static final List<KeyMapping> ALL = List.of(PARLER, CHUCHOTER, MICRO, SOURDINE, MENU, GROUPE, MODE, ICONES, LOINTAIN, EDITEUR, HUD, ETAT);
 

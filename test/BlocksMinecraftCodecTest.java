@@ -56,6 +56,8 @@ public final class BlocksMinecraftCodecTest {
             Class<?> target=Class.forName("net.minecraft."+c,false,BlocksMinecraftCodecTest.class.getClassLoader());
             if(woven) check(Arrays.stream(target.getDeclaredMethods()).anyMatch(m->m.getName().contains("sage$")||m.getName().contains("infinitylink$")));
         }
+        // 1.1.2 : aucune touche du mod à une valeur négative (KeyMapping.setAll -> InputConstants.isKeyDown(-1) plante)
+        if(woven) for(var k:infinitylink.mc.Keys.ALL) check(k.getDefaultKey().getValue()>=0 && k.getDefaultKey().getValue()<512);
         if("off".equals(infinitylink.core.Props.get("blocks"))) {
             check(Block.BLOCK_STATE_REGISTRY.size()==BlocksSpec.BASE);
             check(BlocksMode.forLevel()==Block.BLOCK_STATE_REGISTRY);

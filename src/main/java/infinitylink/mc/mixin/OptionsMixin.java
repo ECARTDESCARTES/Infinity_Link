@@ -30,4 +30,20 @@ public abstract class OptionsMixin {
             infinitylink.mc.Bridge.STATE.error("touches (enregistrement)", t);
         }
     }
+
+    /** Réparation 1.1.2 : un options.txt écrit par la 1.1.2 d'origine porte « key.keyboard.-1 » pour les touches sans
+     *  valeur ; KeyMapping.setAll appellerait alors InputConstants.isKeyDown(-1) (IndexOutOfBoundsException). Toute
+     *  touche du mod à une valeur négative repasse à InputConstants.UNKNOWN après la lecture. */
+    @Inject(method = "load()V", at = @At("TAIL"), require = 1, remap = false)
+    private void infinitylink$repairKeys(CallbackInfo ci) {
+        try {
+            boolean changed = false;
+            for (KeyMapping k : infinitylink.mc.Keys.ALL) {
+                if (k.saveString().endsWith(".-1")) { k.setKey(com.mojang.blaze3d.platform.InputConstants.UNKNOWN); changed = true; }
+            }
+            if (changed) KeyMapping.resetMapping();
+        } catch (Throwable t) {
+            infinitylink.mc.Bridge.STATE.error("touches (reparation)", t);
+        }
+    }
 }
