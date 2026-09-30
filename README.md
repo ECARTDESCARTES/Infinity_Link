@@ -17,6 +17,12 @@ rendu lointain, l'éditeur 16×16, le HUD et l'état du mod. Toutes se règlent 
 `OptionsMixin`, libellés FR/EN par `ClientLanguageMixin`). Relais côté serveur : `libs/sage_voix`, `crates/sage_server/src/voix.rs`.
 Messages Link : `crates/sage_proto/src/link_voix.rs`. Banc de bout en bout : `tools/voix_test.py`.
 
+**Scènes 3D et modèles BlockBench (1.1.4).** Capacités Link « maillages » (`sage:link/meshes`, `meshes_have` :
+scènes glTF à niveaux de détail, instances par cellules, cache disque par serveur vérifié par SHA-256) et « modeles »
+(`sage:link/models` : modèles `.bbmodel` aplatis en quads). Un `item_display` marqué `custom_data {"sage":"scene:<id>"}`
+ou `"modele:<id>"` est dessiné par le mod à la place de son item. Décodage Java pur dans `core/scenes` (`test/ScenesTest.java`),
+rendu dans `mc/scenes`. Contrats : `DOCS/INFINITYLINK-MAILLAGES-PROTOCOLE.md` et `DOCS/INFINITYLINK-MODELES-PROTOCOLE.md`.
+
 - Page Modrinth : https://modrinth.com/project/infinity_link
 - Licence : [Mozilla Public License 2.0](LICENSE) (voir aussi [NOTICE](NOTICE))
 
@@ -81,7 +87,9 @@ On any other server the mod has no effect.
 whisper, groups, mute (M), deafen (N), voice menu (V), group talk (G), icons (H). Sound is spatialized in stereo.
 Frames are encrypted with AES-128-GCM under a per-player key handed over by the "voix" Link capability after account
 login. IMA-ADPCM 16 kHz codec, no native library. There are also keys for distant rendering, the 16×16 editor, the HUD
-and the mod status. All keys are set in Options > Controls. `bash build.sh --mc 26.4-snapshot-2` builds the snapshot jar
+and the mod status. All keys are set in Options > Controls. Since 1.1.4, the server can also send high-definition 3D
+scenes ("maillages" capability, glTF with levels of detail, per-server disk cache) and BlockBench models ("modeles"),
+drawn by the mod in place of a marked `item_display`. `bash build.sh --mc 26.4-snapshot-2` builds the snapshot jar
 from the same sources, ported by `port/26.4-snapshot-2/port.json`.
 
 - Modrinth: https://modrinth.com/project/infinity_link

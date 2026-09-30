@@ -28,6 +28,9 @@ public final class Bridge {
             STATE.tabsCapable = infinitylink.mc.tabs.SageTabs.registered(); // « tabs » seulement si les onglets existent
             STATE.assetsCapable = !"off".equals(infinitylink.core.Props.get("assets")); // « assets » (§11), coupable
             STATE.voiceCapable = !"off".equals(infinitylink.core.Props.get("voix")); // « voix » (1.1.2), coupable
+            STATE.maillagesCapable = infinitylink.mc.scenes.Scenes3d.maillagesOption(); // « maillages » (1.1.4)
+            STATE.modelesCapable = infinitylink.mc.scenes.Scenes3d.modelesOption(); // « modeles » (1.1.3, rendus en 1.1.4)
+            infinitylink.mc.scenes.Scenes3d.connexion(connection);
             byte[] b = STATE.beginHello(MC_VERSION);
             connection.send(new ServerboundCustomPayloadPacket(SagePayload.out(Msg.HELLO, b)));
             STATE.sent();
@@ -54,12 +57,14 @@ public final class Bridge {
         try { infinitylink.mc.tabs.SageTabs.clear(); } catch (Throwable t) { STATE.error("deconnexion onglets", t); }
         try { infinitylink.mc.assets.AssetsLink.INSTANCE.table.clear(); } catch (Throwable t) { STATE.error("deconnexion assets", t); }
         try { infinitylink.mc.voice.VoiceClient.onDisconnect(); } catch (Throwable t) { STATE.error("deconnexion voix", t); }
+        try { infinitylink.mc.scenes.Scenes3d.onDisconnect(); } catch (Throwable t) { STATE.error("deconnexion scenes", t); }
     }
 
     /** Tête de Minecraft.tick() : interroge les touches du manifeste, aucun écran ouvert, envoie les transitions. */
     public static void tick(Minecraft mc) {
         infinitylink.mc.blocks.BlocksEssai.tick();
         infinitylink.mc.lod.LodClient.tick(mc); // attrape tout lui-même
+        infinitylink.mc.scenes.Scenes3d.tick(mc); // idem
         if (!inputOff) {
             try { Keys.tick(mc); infinitylink.mc.voice.VoiceClient.tick(mc); }
             catch (Throwable t) { inputOff = true; STATE.error("touches du mod et voix (desactivees)", t); }

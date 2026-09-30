@@ -66,6 +66,9 @@ public final class LinkState {
     // capacité « voix » (1.1.2) : annoncée si voiceCapable (vrai sauf -Dinfinitylink.voix=off), messages remis à voiceSink
     public volatile boolean voiceCapable;
     public volatile java.util.function.BiConsumer<String, byte[]> voiceSink;
+    // capacités « maillages » et « modeles » (1.1.4) : annoncées si l'option les laisse, messages remis à scenesSink
+    public volatile boolean maillagesCapable, modelesCapable;
+    public volatile java.util.function.BiConsumer<String, byte[]> scenesSink;
     public volatile int formesTables = 0, formesEtats = 0;
 
     public Phase phase() { return phase; }
@@ -96,17 +99,25 @@ public final class LinkState {
 
     /** Capacités du hello : OUR_CAPS, plus « tabs » si les onglets sont enregistrés (tabsCapable). */
     public List<String> ourCaps() {
-        if (!tabsCapable && !assetsCapable && !formesCapable && !voiceCapable) return OUR_CAPS;
+        if (!tabsCapable && !assetsCapable && !formesCapable && !voiceCapable && !maillagesCapable && !modelesCapable) return OUR_CAPS;
         List<String> c = new ArrayList<>(OUR_CAPS);
         if (tabsCapable) c.add(TabsMsg.CAP_TABS);
         if (assetsCapable) c.add(AssetsMsg.CAP_ASSETS);
         if (formesCapable) c.add(FormesSgb2.CAP_FORMES);
         if (voiceCapable) c.add(infinitylink.core.voice.VoiceMsg.CAP_VOIX);
+        if (maillagesCapable) c.add(infinitylink.core.scenes.Contrat.CAP);
+        if (modelesCapable) c.add(infinitylink.core.scenes.ModelesV1.CAP);
         return List.copyOf(c);
     }
 
     /** Connecté et capacité « assets » accordée par le manifeste (§11 ; absente = vanilla, §5). */
     public boolean assetsOn() { return phase == Phase.CONNECTED && caps.contains(AssetsMsg.CAP_ASSETS); }
+
+    /** Connecté et capacité « maillages » (1.1.4) accordée par le manifeste. */
+    public boolean maillagesOn() { return phase == Phase.CONNECTED && caps.contains(infinitylink.core.scenes.Contrat.CAP); }
+
+    /** Connecté et capacité « modeles » (1.1.3, rendue en 1.1.4) accordée par le manifeste. */
+    public boolean modelesOn() { return phase == Phase.CONNECTED && caps.contains(infinitylink.core.scenes.ModelesV1.CAP); }
 
     /** Connecté et capacité « voix » accordée par le manifeste. */
     public boolean voiceOn() { return phase == Phase.CONNECTED && caps.contains(infinitylink.core.voice.VoiceMsg.CAP_VOIX); }
@@ -150,6 +161,7 @@ public final class LinkState {
                 case AssetsMsg.ASSETS_OFFER, AssetsMsg.BLOCKS_DELTA, AssetsMsg.UPLOAD_RESULT, AssetsMsg.DRAFT_PREVIEW -> ok = applyAssets(path, data);
                 case FormesSgb2.FORMES -> ok = applyFormes(data);
                 case infinitylink.core.voice.VoiceMsg.VOICE, infinitylink.core.voice.VoiceMsg.VOICE_PEERS -> ok = applyVoice(path, data);
+                case infinitylink.core.scenes.Contrat.CANAL, infinitylink.core.scenes.ModelesV1.CANAL -> ok = applyScenes(path, data);
                 default -> { reject("message inconnu : sage:" + path); return; }
             }
             if (ok) rx.incrementAndGet();
@@ -190,6 +202,15 @@ public final class LinkState {
 
     /** Connecté et capacité « formes » accordée par le manifeste. */
     public boolean formesOn() { return phase == Phase.CONNECTED && caps.contains(FormesSgb2.CAP_FORMES); }
+
+    /** sage:link/meshes et sage:link/models : décodés hors du fil réseau par scenesSink (couche mc). */
+    private boolean applyScenes(String path, byte[] data) {
+        boolean maillages = infinitylink.core.scenes.Contrat.CANAL.equals(path);
+        if (!(maillages ? maillagesOn() : modelesOn())) { reject(path + " sans capacite " + (maillages ? "maillages" : "modeles")); return false; }
+        java.util.function.BiConsumer<String, byte[]> s = scenesSink;
+        if (s != null) s.accept(path, data);
+        return true;
+    }
 
     private boolean applyVoice(String path, byte[] data) {
         if (!voiceOn()) { reject(path + " sans capacite voix"); return false; }

@@ -11,6 +11,8 @@
     "HudMixin",
     "MinecraftMixin",
     "LevelRendererMixin",
+    "LevelExtractorMixin",
+    "ItemDisplayRendererMixin",
     "CameraMixin",
     "FogRendererMixin",
     "ClientLevelMixin",

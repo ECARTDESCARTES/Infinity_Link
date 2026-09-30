@@ -52,7 +52,8 @@ public final class BlocksMinecraftCodecTest {
             "world.level.chunk.LevelChunk","world.level.chunk.ProtoChunk","world.level.storage.LevelStorageSource",
             "world.level.levelgen.flat.FlatLayerInfo","client.multiplayer.ClientConfigurationPacketListenerImpl",
             "client.renderer.entity.layers.HumanoidArmorLayer","client.renderer.entity.layers.CustomHeadLayer",
-            "server.packs.resources.ReloadableResourceManager","client.Options","client.resources.language.ClientLanguage")) {
+            "server.packs.resources.ReloadableResourceManager","client.Options","client.resources.language.ClientLanguage",
+            "client.renderer.extract.LevelExtractor","client.renderer.entity.DisplayRenderer$ItemDisplayRenderer")) {
             Class<?> target=Class.forName("net.minecraft."+c,false,BlocksMinecraftCodecTest.class.getClassLoader());
             if(woven) check(Arrays.stream(target.getDeclaredMethods()).anyMatch(m->m.getName().contains("sage$")||m.getName().contains("infinitylink$")));
         }

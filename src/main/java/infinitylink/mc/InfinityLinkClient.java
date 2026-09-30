@@ -15,6 +15,8 @@ public final class InfinityLinkClient implements ClientModInitializer {
             infinitylink.mc.armor.Armures3d.loadOptions(); // armures 3D (0.3.2)
             infinitylink.mc.voice.VoiceClient.loadOptions(); // chat vocal (1.1.2)
             Bridge.STATE.voiceSink = infinitylink.mc.voice.VoiceClient::onMessage;
+            infinitylink.mc.scenes.Scenes3d.loadOptions(); // scènes 3D (1.1.4)
+            Bridge.STATE.scenesSink = infinitylink.mc.scenes.Scenes3d::recevoir;
             System.getProperties().put("infinitylink", oracle);
             System.getProperties().put("sage.link", oracle); // outils de bout en bout écrits pour SAGE Link
             // Onglets créatifs : enregistrés (ou non) avant le gel par SageBoot ; ici on branche la réception.

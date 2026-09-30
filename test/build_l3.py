@@ -116,7 +116,7 @@ def main():
         (d/'infinitylink/core').mkdir(parents=True,exist_ok=True)
         (d/'infinitylink/core/version.txt').write_text(version.split('+')[0])
     quick='--quick' in sys.argv
-    pure=['CodecTest','TabsCodecTest','AssetsCodecTest','AssetsClientTest','LodMesherTest','LodPoolTest','BlocksViewTest','Armures3dTest','FormesTest','VoiceTest']
+    pure=['CodecTest','TabsCodecTest','AssetsCodecTest','AssetsClientTest','LodMesherTest','LodPoolTest','BlocksViewTest','Armures3dTest','FormesTest','VoiceTest','ScenesTest']
     compile_java(list((SRC/'infinitylink/core').rglob('*.java'))+[TESTDIR/(n+'.java') for n in pure],tests,cp)
     for name in (['BlocksViewTest'] if quick else pure): run([JDK/'bin/java.exe','-Dstdout.encoding=UTF-8','-cp',tests,name])
     if os.environ.get('LOD_REPLAY'):

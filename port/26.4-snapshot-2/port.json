@@ -51,6 +51,12 @@
       "min": 2
     },
     {
+      "fichiers": "infinitylink/mc/scenes/Scenes3d.java",
+      "motif": "device\\.compilePipeline\\(",
+      "par": "new com.mojang.blaze3d.pipeline.PipelineBuilder(device).compilePipeline(",
+      "min": 1
+    },
+    {
       "fichiers": "test/BlocksMinecraftCodecTest.java",
       "motif": "ByteBufCodecs\\.idMapper\\(view\\)",
       "par": "ByteBufCodecs.idMapper(view::byIdOrThrow, view::getIdOrThrow)",

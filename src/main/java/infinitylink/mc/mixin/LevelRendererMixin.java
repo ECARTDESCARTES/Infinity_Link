@@ -25,11 +25,13 @@ public abstract class LevelRendererMixin {
     private void sage$lodFrame(GraphicsResourceAllocator allocator, boolean b1, CameraRenderState camera, GpuBufferSlice fog,
                                Vector4f fogColor, boolean b2, boolean b3, CallbackInfo ci) {
         LodClient.frameBegin(camera);
+        infinitylink.mc.scenes.Scenes3d.frameBegin(camera); // scènes 3D (1.1.4), attrape tout
     }
 
     @Inject(method = "executeSolid(Lnet/minecraft/client/renderer/chunk/ChunkSectionsToRender;Lnet/minecraft/client/renderer/feature/FeatureRenderDispatcher$PreparedFrame;Lcom/mojang/renderpearl/api/commands/RenderPass;)V",
             at = @At("TAIL"), require = 1, remap = false)
     private void sage$lodDraw(ChunkSectionsToRender sections, FeatureRenderDispatcher.PreparedFrame frame, RenderPass pass, CallbackInfo ci) {
         LodClient.drawSolid(pass);
+        infinitylink.mc.scenes.Scenes3d.draw(pass);
     }
 }
