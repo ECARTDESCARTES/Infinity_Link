@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "infinitylink:item/bbmodel/garde_corps_trottoir_angle"
+  }
+}

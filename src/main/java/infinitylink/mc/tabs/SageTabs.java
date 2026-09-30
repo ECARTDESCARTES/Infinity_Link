@@ -34,7 +34,8 @@ public final class SageTabs {
     private SageTabs() {}
 
     public static final int MAX = TabsMsg.MAX_TABS;
-    private static final CreativeModeTab[] TABS = new CreativeModeTab[MAX];
+    public static final int MODELS_SLOT = MAX;
+    private static final CreativeModeTab[] TABS = new CreativeModeTab[MAX + 1];
     private static volatile boolean registered;
 
     /** Onglet rempli : titre, icône, piles décodées (quantité 1, sans doublon), rang parmi les onglets non vides. */
@@ -42,7 +43,7 @@ public final class SageTabs {
 
     /** Catalogue appliqué, remplacé d'un bloc (fil client). byRank[r] = indice de l'onglet de rang r. */
     public static final class View {
-        static final View EMPTY = new View(new Entry[MAX], new int[0], 0, 0);
+        static final View EMPTY = new View(new Entry[MAX + 1], new int[0], 0, 0);
         final Entry[] byTab;
         final int[] byRank;
         public final int stacks, rejected;
@@ -60,6 +61,8 @@ public final class SageTabs {
     }
 
     private static volatile View view = View.EMPTY;
+    private static View serverView = View.EMPTY;
+    private static List<ItemStack> modelStacks = List.of();
 
     /** Génération du catalogue : un décodage terminé après un catalogue plus récent ou une déconnexion est jeté. */
     private static final java.util.concurrent.atomic.AtomicLong GEN = new java.util.concurrent.atomic.AtomicLong();
@@ -99,7 +102,7 @@ public final class SageTabs {
         } catch (Throwable ignored) {
             // pas de loader (banc) : on continue
         }
-        for (int k = 0; k < MAX; k++) {
+        for (int k = 0; k <= MAX; k++) {
             final int idx = k;
             ResourceKey<CreativeModeTab> key = ResourceKey.create(Registries.CREATIVE_MODE_TAB,
                     Identifier.fromNamespaceAndPath("infinitylink", String.format("onglet_%03d", k)));
@@ -113,7 +116,7 @@ public final class SageTabs {
             TABS[k] = tab;
         }
         registered = true;
-        log(MAX + " onglets enregistres (colonnes 1000..1063)");
+        log(MAX + " onglets serveur et un onglet BBmodel enregistres");
     }
 
     // ---- lecture (mixins, fil client)
@@ -123,6 +126,26 @@ public final class SageTabs {
     public static int rank(int k) { Entry e = view.entry(k); return e == null ? -1 : e.rank(); }
     public static int count() { return view.count(); }
     public static View view() { return view; }
+
+    /** Fil client : onglet local distinct du catalogue et des acquittements serveur. */
+    public static void setModelStacks(List<ItemStack> stacks) {
+        modelStacks = List.copyOf(stacks);
+        mergeModels();
+        invalidate();
+        TabPages.changed();
+    }
+
+    static void mergeModels() {
+        View base = serverView;
+        if (modelStacks.isEmpty()) { view = base; return; }
+        Entry[] by = java.util.Arrays.copyOf(base.byTab, MAX + 1);
+        int[] ranks = java.util.Arrays.copyOf(base.byRank, base.count() + 1);
+        int rank = base.count();
+        by[MODELS_SLOT] = new Entry("Modèles BBmodel", "", Component.literal("Modèles BBmodel"),
+                modelStacks.get(0), modelStacks, rank);
+        ranks[rank] = MODELS_SLOT;
+        view = new View(by, ranks, base.stacks + modelStacks.size(), base.rejected);
+    }
 
     public static CreativeModeTab tabAtRank(int r) {
         int k = view.tabOfRank(r);
@@ -292,7 +315,8 @@ public final class SageTabs {
             if (g != GEN.get()) return; // catalogue plus récent ou déconnexion pendant le décodage
             if (err != null || v == null) throw err != null ? err : new IllegalStateException("vue absente");
             long m0 = System.nanoTime();
-            view = v;
+            serverView = v;
+            mergeModels();
             invalidate();
             TabPages.changed();
             st.mods = v.count();
@@ -313,6 +337,8 @@ public final class SageTabs {
     /** Déconnexion : onglets vidés (donc cachés), cache vanilla invalidé. */
     public static void clear() {
         GEN.incrementAndGet(); // un décodage en cours ne s'installera pas après la déconnexion
+        serverView = View.EMPTY;
+        modelStacks = List.of();
         view = View.EMPTY;
         invalidate();
         TabPages.changed();
@@ -341,6 +367,8 @@ public final class SageTabs {
     /** J5 : identifiant de recherche d'un contenu = son id sage (custom_data.sage), sinon null (vanilla). */
     public static Identifier searchId(ItemStack stack) {
         try {
+            String model = ModelTabs.modelId(stack);
+            if (model != null) return Identifier.fromNamespaceAndPath("bbmodel", model);
             CustomData cd = stack.get(DataComponents.CUSTOM_DATA);
             if (cd == null || cd.isEmpty()) return null;
             String s = cd.copyTag().getStringOr("sage", "");

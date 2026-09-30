@@ -20,6 +20,7 @@
     "CreativeModeTabMixin",
     "CreativeModeTabsAccessor",
     "CreativeModeInventoryScreenMixin",
+    "ModelItemUseMixin",
     "SessionSearchTreesMixin",
     "PalettedContainerFactoryMixin",
     "BlockUpdatePacketMixin",
@@ -42,7 +43,8 @@
     "ReloadableResourceManagerMixin",
     "ModelManagerMixin",
     "OptionsMixin",
-    "ClientLanguageMixin"
+    "ClientLanguageMixin",
+    "ModelCollisionMixin"
   ],
   "injectors": {
     "defaultRequire": 1

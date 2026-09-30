@@ -102,6 +102,41 @@ public final class TabsE2E {
                 .bindComponents(net.minecraft.core.component.DataComponentMap.builder().set(DataComponents.MAX_STACK_SIZE, 64).build());
         System.out.println("bootstrap 26.3 : " + (System.nanoTime() - t0) / 1_000_000 + " ms");
 
+        // Catalogue BBmodel local : mise à jour, purge et vrais codecs créatifs (sans réseau ni écran).
+        Object modelSession = new Object();
+        infinitylink.mc.tabs.ModelTabs.refresh(modelSession, 1, java.util.Map.of("lanterne", "Lanterne", "banc_davioud", "Banc Davioud"), true);
+        SageTabs.Entry models = SageTabs.view().entry(SageTabs.MODELS_SLOT);
+        check("onglet BBmodel : deux modèles triés et place distincte du catalogue serveur",
+                SageTabs.count() == 1 && models != null && models.stacks().size() == 2
+                        && "banc_davioud".equals(infinitylink.mc.tabs.ModelTabs.modelId(models.stacks().get(0))), "");
+        ItemStack modelToken = models.stacks().get(0);
+        check("aperçus BBmodel : 165 images indexées", infinitylink.mc.tabs.ModelPreviews.count() == 165,
+                String.valueOf(infinitylink.mc.tabs.ModelPreviews.count()));
+        check("banc Davioud : modèle d'item aperçu choisi", "infinitylink:bbmodel/banc_davioud".equals(
+                String.valueOf(modelToken.get(DataComponents.ITEM_MODEL))), "");
+        check("nouveau modèle sans aperçu : pas de texture manquante", infinitylink.mc.tabs.ModelPreviews.itemModel("inconnu") == null, "");
+        check("jeton BBmodel : nom et identifiant de recherche", modelToken.getHoverName().getString().equals("Banc Davioud")
+                && "bbmodel:banc_davioud".equals(String.valueOf(SageTabs.searchId(modelToken))), "");
+        ItemStack modelBack = dec(ItemStack.OPTIONAL_UNTRUSTED_STREAM_CODEC,
+                enc(ItemStack.OPTIONAL_UNTRUSTED_STREAM_CODEC, modelToken, ra), ra);
+        check("jeton BBmodel : composants conservés par le codec créatif réseau",
+                ItemStack.isSameItemSameComponents(modelToken, modelBack), "");
+        SageTabs.View modelView = SageTabs.view();
+        infinitylink.mc.tabs.ModelTabs.refresh(modelSession, 1, java.util.Map.of(), true);
+        check("catalogue inchangé : aucune reconstruction à chaque tick", SageTabs.view() == modelView, "");
+        infinitylink.mc.tabs.ModelTabs.refresh(modelSession, 2, java.util.Map.of("lanterne", "Lanterne révisée"), true);
+        check("catalogue BBmodel : suppression et renommage appliqués", SageTabs.view().entry(SageTabs.MODELS_SLOT).stacks().size() == 1
+                && SageTabs.view().entry(SageTabs.MODELS_SLOT).stacks().get(0).getHoverName().getString().equals("Lanterne révisée"), "");
+        check("identifiant hostile : pas de commande injectée", infinitylink.mc.tabs.ModelTabs.modelId(
+                infinitylink.mc.tabs.ModelTabs.stack("lanterne\nstop", "Invalide")) == null, "");
+        infinitylink.mc.tabs.ModelTabs.refresh(modelSession, 2, java.util.Map.of("lanterne", "Lanterne"), false);
+        check("capacité inactive : onglet BBmodel masqué", SageTabs.count() == 0, "");
+        infinitylink.mc.tabs.ModelTabs.refresh(new Object(), 0, java.util.Map.of("chaise", "Chaise"), true);
+        check("nouvelle connexion : pas de modèles du serveur précédent", SageTabs.view().entry(SageTabs.MODELS_SLOT).stacks().size() == 1
+                && "chaise".equals(infinitylink.mc.tabs.ModelTabs.modelId(SageTabs.view().entry(SageTabs.MODELS_SLOT).stacks().get(0))), "");
+        infinitylink.mc.tabs.ModelTabs.clear();
+        check("déconnexion : catalogue BBmodel vide", SageTabs.count() == 0, "");
+
         // ---- pile de référence du §5.4 (octets de set_slot du serveur)
         byte[] pile = hex(TabsCodecRef.PILE);
         try {

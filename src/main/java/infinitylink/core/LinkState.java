@@ -106,7 +106,7 @@ public final class LinkState {
         if (formesCapable) c.add(FormesSgb2.CAP_FORMES);
         if (voiceCapable) c.add(infinitylink.core.voice.VoiceMsg.CAP_VOIX);
         if (maillagesCapable) c.add(infinitylink.core.scenes.Contrat.CAP);
-        if (modelesCapable) c.add(infinitylink.core.scenes.ModelesV1.CAP);
+        if (modelesCapable) { c.add(infinitylink.core.scenes.ModelesV1.CAP); c.add("collisions"); }
         return List.copyOf(c);
     }
 
@@ -117,6 +117,8 @@ public final class LinkState {
     public boolean maillagesOn() { return phase == Phase.CONNECTED && caps.contains(infinitylink.core.scenes.Contrat.CAP); }
 
     /** Connecté et capacité « modeles » (1.1.3, rendue en 1.1.4) accordée par le manifeste. */
+    public boolean collisionsOn() { return phase == Phase.CONNECTED && caps.contains("collisions"); }
+
     public boolean modelesOn() { return phase == Phase.CONNECTED && caps.contains(infinitylink.core.scenes.ModelesV1.CAP); }
 
     /** Connecté et capacité « voix » accordée par le manifeste. */

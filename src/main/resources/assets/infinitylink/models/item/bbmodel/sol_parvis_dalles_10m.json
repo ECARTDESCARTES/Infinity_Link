@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "infinitylink:item/bbmodel/sol_parvis_dalles_10m"
+  }
+}

@@ -86,5 +86,10 @@ field|net.minecraft.client.Options|keyMappings|[Lnet/minecraft/client/KeyMapping
 method|net.minecraft.client.resources.language.ClientLanguage|getOrDefault|(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 method|net.minecraft.client.resources.language.ClientLanguage|has|(Ljava/lang/String;)Z
 # 1.1.4 : scènes 3D (capacités maillages et modeles)
+method|net.minecraft.client.multiplayer.MultiPlayerGameMode|useItemOn|(Lnet/minecraft/client/player/LocalPlayer;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/InteractionResult;
+method|net.minecraft.client.multiplayer.MultiPlayerGameMode|useItem|(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;
 method|net.minecraft.client.renderer.extract.LevelExtractor|extract|(Lnet/minecraft/client/DeltaTracker;Lnet/minecraft/client/Camera;F)V
 method|net.minecraft.client.renderer.entity.DisplayRenderer$ItemDisplayRenderer|extractRenderState|(Lnet/minecraft/world/entity/Display$ItemDisplay;Lnet/minecraft/client/renderer/entity/state/ItemDisplayEntityRenderState;F)V
+
+method|net.minecraft.world.level.CommonLevelAccessor|getEntityCollisions|(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;
+method|net.minecraft.client.multiplayer.ClientLevel|removeEntity|(ILnet/minecraft/world/entity/Entity$RemovalReason;)V

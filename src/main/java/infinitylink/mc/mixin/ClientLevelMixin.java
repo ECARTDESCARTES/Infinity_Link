@@ -12,6 +12,11 @@ import infinitylink.mc.lod.LodClient;
  *  Connection.disconnect. En tête, la connexion est encore ouverte : on y envoie lod_view 0 (contrat §9). */
 @Mixin(value = ClientLevel.class, remap = false)
 public abstract class ClientLevelMixin {
+    @Inject(method="removeEntity(ILnet/minecraft/world/entity/Entity$RemovalReason;)V",at=@At("HEAD"),require=1,remap=false)
+    private void infinitylink$removeCollider(int id, net.minecraft.world.entity.Entity.RemovalReason reason, CallbackInfo ci) {
+        infinitylink.mc.scenes.ModelCollisionClient.remove(id);
+    }
+
     @Inject(method = "disconnect(Lnet/minecraft/network/chat/Component;)V", at = @At("HEAD"), require = 1, remap = false)
     private void sage$lodQuit(Component reason, CallbackInfo ci) {
         LodClient.beforeQuit();

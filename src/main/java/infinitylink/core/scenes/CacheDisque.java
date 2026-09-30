@@ -34,20 +34,18 @@ public final class CacheDisque {
             List<Map.Entry<Cle, long[]>> lus = new ArrayList<>();
             try (var fichiers = Files.list(dossier)) {
                 for (Path f : (Iterable<Path>) fichiers::iterator) {
-                    // un fichier illisible (supprimé, verrouillé) est ignoré seul : il ne fausse ni l'index ni le total
-                    try {
-                        String n = f.getFileName().toString();
-                        if (n.endsWith(".tmp")) { Files.deleteIfExists(f); continue; }
-                        if (!n.endsWith(".bin") || n.length() != 36) continue;
-                        Cle k = depuisHex(n.substring(0, 32));
-                        if (k == null) continue;
-                        long t = Files.size(f);
-                        lus.add(Map.entry(k, new long[]{t, Files.getLastModifiedTime(f).toMillis()}));
-                    } catch (IOException | java.io.UncheckedIOException ignored) { }
+                    String n = f.getFileName().toString();
+                    if (n.endsWith(".tmp")) { Files.deleteIfExists(f); continue; }
+                    if (!n.endsWith(".bin") || n.length() != 36) continue;
+                    Cle k = depuisHex(n.substring(0, 32));
+                    if (k == null) continue;
+                    long t = Files.size(f);
+                    lus.add(Map.entry(k, new long[]{t, Files.getLastModifiedTime(f).toMillis()}));
+                    total += t;
                 }
-            } catch (IOException | java.io.UncheckedIOException ignored) { }
+            }
             lus.sort(Comparator.comparingLong(e -> e.getValue()[1])); // du plus ancien au plus récent
-            for (Map.Entry<Cle, long[]> e : lus) { index.put(e.getKey(), e.getValue()); total += e.getValue()[0]; }
+            for (Map.Entry<Cle, long[]> e : lus) index.put(e.getKey(), e.getValue());
         } catch (IOException ignored) { }
     }
 

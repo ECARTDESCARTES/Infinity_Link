@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "infinitylink:item/bbmodel/totem_metro_m_cercle"
+  }
+}

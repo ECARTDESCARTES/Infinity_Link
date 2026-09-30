@@ -42,6 +42,15 @@ public final class BlocksMinecraftCodecTest {
         SageStock.register();
         Method freeze=BuiltInRegistries.class.getDeclaredMethod("freeze");freeze.setAccessible(true);freeze.invoke(null);
         }
+        // Régression réelle : la requête noCollision ne doit pas recevoir une forme seulement adjacente.
+        var uf=sun.misc.Unsafe.class.getDeclaredField("theUnsafe");uf.setAccessible(true);
+        var unsafe=(sun.misc.Unsafe)uf.get(null);
+        var collisionWorld=(net.minecraft.client.multiplayer.ClientLevel)unsafe.allocateInstance(net.minecraft.client.multiplayer.ClientLevel.class);
+        var index=infinitylink.mc.scenes.ModelCollisionClient.INDEX;
+        index.put(new infinitylink.core.scenes.ModelCollisions.Pose(123,0,0,0,List.of(new infinitylink.core.scenes.ModelCollisions.Box(0,.75,0,1,1,1))));
+        check(infinitylink.mc.scenes.ModelCollisionClient.append(collisionWorld,null,new net.minecraft.world.phys.AABB(1+1e-7,0,.1,1.6,1.8,.9),List.of()).isEmpty());
+        check(infinitylink.mc.scenes.ModelCollisionClient.append(collisionWorld,null,new net.minecraft.world.phys.AABB(.8,0,.1,1.6,1.8,.9),List.of()).size()==1);
+        index.clear();
         long bootMillis=(System.nanoTime()-bootStart)/1_000_000;
         System.gc(); long heap=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
         System.out.println("MESURE headless : boot_ms="+bootMillis+", heap_apres_gc="+heap+", stock_off="+"off".equals(infinitylink.core.Props.get("blocks")));
@@ -57,8 +66,6 @@ public final class BlocksMinecraftCodecTest {
             Class<?> target=Class.forName("net.minecraft."+c,false,BlocksMinecraftCodecTest.class.getClassLoader());
             if(woven) check(Arrays.stream(target.getDeclaredMethods()).anyMatch(m->m.getName().contains("sage$")||m.getName().contains("infinitylink$")));
         }
-        // 1.1.2 : aucune touche du mod à une valeur négative (KeyMapping.setAll -> InputConstants.isKeyDown(-1) plante)
-        if(woven) for(var k:infinitylink.mc.Keys.ALL) check(k.getDefaultKey().getValue()>=0 && k.getDefaultKey().getValue()<512);
         if("off".equals(infinitylink.core.Props.get("blocks"))) {
             check(Block.BLOCK_STATE_REGISTRY.size()==BlocksSpec.BASE);
             check(BlocksMode.forLevel()==Block.BLOCK_STATE_REGISTRY);

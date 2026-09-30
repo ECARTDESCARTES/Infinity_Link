@@ -167,6 +167,8 @@ public final class Scenes3d {
         Magasin magasin;
         final ModelesV1 modeles;
         final AtomicInteger modelesCharges = new AtomicInteger();
+        final java.util.concurrent.ConcurrentMap<String, String> modelNames = new java.util.concurrent.ConcurrentHashMap<>();
+        final AtomicLong modelRevision = new AtomicLong();
         /** Mémoire native des textures décodées pas encore téléversées ni fermées, plafonnée : au-delà, le décodage
          *  attend (differes) qu'une texture soit téléversée ou libérée. */
         final AtomicLong decodees = new AtomicLong();
@@ -249,9 +251,24 @@ public final class Scenes3d {
         final boolean maillages;
         Relais(Session s, boolean maillages) { this.s = s; this.maillages = maillages; }
 
-        @Override public void scene(String marqueur, Contrat.Description d, boolean commeItem) { s.file.add(new Plan(marqueur, d, commeItem, economie)); }
-        @Override public void retiree(String marqueur) { s.file.add(new Retrait(marqueur)); }
-        @Override public void videe() { s.file.add(new Vidage(maillages ? "scene:" : "modele:")); }
+        @Override public void scene(String marqueur, Contrat.Description d, boolean commeItem) {
+            s.file.add(new Plan(marqueur, d, commeItem, economie));
+            if (!maillages && marqueur.startsWith("modele:")) {
+                s.modelNames.put(marqueur.substring(7), d.nom());
+                s.modelRevision.incrementAndGet();
+            }
+        }
+        @Override public void retiree(String marqueur) {
+            s.file.add(new Retrait(marqueur));
+            if (!maillages && marqueur.startsWith("modele:")) {
+                s.modelNames.remove(marqueur.substring(7));
+                s.modelRevision.incrementAndGet();
+            }
+        }
+        @Override public void videe() {
+            s.file.add(new Vidage(maillages ? "scene:" : "modele:"));
+            if (!maillages) { s.modelNames.clear(); s.modelRevision.incrementAndGet(); }
+        }
         @Override public void niveau(Cle k, Contrat.NiveauGpu n) { s.file.add(new ArriveeNiveau(k, n, maillages)); }
         @Override public void texture(Cle k, Contrat.Texture t) {
             if (disabled || s.fermee) return;
@@ -360,6 +377,7 @@ public final class Scenes3d {
         Session s;
         synchronized (Scenes3d.class) { s = session; session = null; }
         if (s != null) s.fermer();
+        infinitylink.mc.tabs.ModelTabs.clear();
     }
 
     // ---------------------------------------------------------------------------------------------------- tick
@@ -377,6 +395,8 @@ public final class Scenes3d {
             long now = System.currentTimeMillis();
             if (now - s.dernierEtat < 1000) return;
             s.dernierEtat = now;
+            infinitylink.mc.tabs.ModelTabs.refresh(s, s.modelRevision.get(), s.modelNames,
+                    Bridge.STATE.modelesOn() && modelesOption() && infinitylink.mc.tabs.SageTabs.registered());
             // ÉTAT et models_ready sur le fil de réception : le fil client ne prend jamais les verrous du magasin ni
             // des modèles (tenus pendant les décodages)
             boolean maillages = Bridge.STATE.maillagesOn(), modeles = Bridge.STATE.modelesOn();

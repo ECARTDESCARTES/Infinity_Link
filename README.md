@@ -4,10 +4,16 @@
 
 **Français** · [English](#english)
 
-Mod client Minecraft **26.3** et **26.4-snapshot-2** (Fabric Loader 0.19.5, **sans Fabric API**) du serveur **∞SMP** — anciennement *SAGE Link*, puis *Infinity_Link* (∞link).
+Mod client Minecraft **26.3**, **26.4-snapshot-1** et **26.4-snapshot-2** (Fabric Loader 0.19.5, **sans Fabric API**) du serveur **∞SMP** — anciennement *SAGE Link*, puis *Infinity_Link* (∞link).
 Il relie le client au serveur : rendu lointain natif, onglets créatifs par mod, armures 3D des mods, créations des
 joueurs (préchargement, envoi et éditeur 16×16), chat vocal de proximité (1.1.2), HUD et touches pilotés par le serveur.
 Sur un autre serveur, le mod n'a aucun effet.
+
+**Modèles BBmodel (1.1.8).** Un onglet créatif dédié liste les modèles reçus du serveur, avec leurs miniatures transparentes,
+leur nom et leur identifiant. Les 165 aperçus intégrés sont rendus depuis les fichiers BBmodel exacts par Blockbench.
+Prendre un objet de sélection puis faire un clic droit place le modèle à ses pieds, à l’échelle 1, via le plugin existant.
+Le catalogue suit les ajouts, remplacements et retraits à chaud ; il est vidé à la déconnexion. Voir
+[le guide local](../../../DOCS/ONGLET-BBMODEL.md). Depuis la 1.1.7, les poses reçoivent aussi des volumes solides par cube, avec rotation et échelle, intégrés à la physique native et contrôlés par le serveur. Les pièces inclinées utilisent leur enveloppe rectangulaire individuelle. Voir [les collisions physiques](../../../DOCS/COLLISIONS-BBMODEL.md).
 
 **Chat vocal et touches (1.1.2).** Façon Simple Voice Chat : parler en appuyant (Verr. Maj) ou activation vocale,
 chuchotement, groupes, micro coupé (M), sourdine (N), menu vocal (V), parole de groupe (G), icônes (H). Le son est
@@ -16,12 +22,6 @@ spatialisé en stéréo. Les trames sont chiffrées en AES-128-GCM sous une clé
 rendu lointain, l'éditeur 16×16, le HUD et l'état du mod. Toutes se règlent dans Options > Commandes (`Keys.java`,
 `OptionsMixin`, libellés FR/EN par `ClientLanguageMixin`). Relais côté serveur : `libs/sage_voix`, `crates/sage_server/src/voix.rs`.
 Messages Link : `crates/sage_proto/src/link_voix.rs`. Banc de bout en bout : `tools/voix_test.py`.
-
-**Scènes 3D et modèles BlockBench (1.1.4).** Capacités Link « maillages » (`sage:link/meshes`, `meshes_have` :
-scènes glTF à niveaux de détail, instances par cellules, cache disque par serveur vérifié par SHA-256) et « modeles »
-(`sage:link/models` : modèles `.bbmodel` aplatis en quads). Un `item_display` marqué `custom_data {"sage":"scene:<id>"}`
-ou `"modele:<id>"` est dessiné par le mod à la place de son item. Décodage Java pur dans `core/scenes` (`test/ScenesTest.java`),
-rendu dans `mc/scenes`. Contrats : `DOCS/INFINITYLINK-MAILLAGES-PROTOCOLE.md` et `DOCS/INFINITYLINK-MODELES-PROTOCOLE.md`.
 
 - Page Modrinth : https://modrinth.com/project/infinity_link
 - Licence : [Mozilla Public License 2.0](LICENSE) (voir aussi [NOTICE](NOTICE))
@@ -87,9 +87,7 @@ On any other server the mod has no effect.
 whisper, groups, mute (M), deafen (N), voice menu (V), group talk (G), icons (H). Sound is spatialized in stereo.
 Frames are encrypted with AES-128-GCM under a per-player key handed over by the "voix" Link capability after account
 login. IMA-ADPCM 16 kHz codec, no native library. There are also keys for distant rendering, the 16×16 editor, the HUD
-and the mod status. All keys are set in Options > Controls. Since 1.1.4, the server can also send high-definition 3D
-scenes ("maillages" capability, glTF with levels of detail, per-server disk cache) and BlockBench models ("modeles"),
-drawn by the mod in place of a marked `item_display`. `bash build.sh --mc 26.4-snapshot-2` builds the snapshot jar
+and the mod status. All keys are set in Options > Controls. `bash build.sh --mc 26.4-snapshot-2` builds the snapshot jar
 from the same sources, ported by `port/26.4-snapshot-2/port.json`.
 
 - Modrinth: https://modrinth.com/project/infinity_link

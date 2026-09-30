@@ -155,7 +155,7 @@ public final class Magasin {
         if (x == null && (r == null || !demandees.contains(m.cle()))) { rejeter("ressource " + m.cle().hex() + " non demandée"); return; }
         if (x == null) {
             if (m.decalage() != 0) { rejeter("ressource " + m.cle().hex() + " : décalage " + m.decalage() + " attendu 0"); return; }
-            if (receptions.size() >= Contrat.MAX_RECEPTIONS || enVol + r.taille() > Contrat.MAX_EN_VOL) { rejeter("trop de ressources en réception"); demandees.remove(m.cle()); redemander(m.cle()); return; } // §5 : BESOIN renvoyé après un rejet
+            if (receptions.size() >= Contrat.MAX_RECEPTIONS || enVol + r.taille() > Contrat.MAX_EN_VOL) { rejeter("trop de ressources en réception"); demandees.remove(m.cle()); return; }
             x = new Reception(r);
             receptions.put(m.cle(), x);
             enVol += r.taille();

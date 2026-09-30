@@ -43,6 +43,7 @@ public final class Bridge {
     public static boolean onClientbound(Connection connection, CustomPacketPayload payload) {
         if (!(payload instanceof SagePayload s)) return false;
         try {
+            if (infinitylink.mc.scenes.ModelCollisionClient.receive(s.id().getPath(), s.data())) return true;
             if (infinitylink.mc.blocks.BlocksEssai.receive(connection, s.id().getPath(), s.data())) return true;
             STATE.onInbound(s.id().getPath(), s.data());
         } catch (Throwable t) {
@@ -57,6 +58,7 @@ public final class Bridge {
         try { infinitylink.mc.tabs.SageTabs.clear(); } catch (Throwable t) { STATE.error("deconnexion onglets", t); }
         try { infinitylink.mc.assets.AssetsLink.INSTANCE.table.clear(); } catch (Throwable t) { STATE.error("deconnexion assets", t); }
         try { infinitylink.mc.voice.VoiceClient.onDisconnect(); } catch (Throwable t) { STATE.error("deconnexion voix", t); }
+        infinitylink.mc.scenes.ModelCollisionClient.clear();
         try { infinitylink.mc.scenes.Scenes3d.onDisconnect(); } catch (Throwable t) { STATE.error("deconnexion scenes", t); }
     }
 
@@ -64,6 +66,7 @@ public final class Bridge {
     public static void tick(Minecraft mc) {
         infinitylink.mc.blocks.BlocksEssai.tick();
         infinitylink.mc.lod.LodClient.tick(mc); // attrape tout lui-même
+        infinitylink.mc.scenes.ModelCollisionClient.tick(mc);
         infinitylink.mc.scenes.Scenes3d.tick(mc); // idem
         if (!inputOff) {
             try { Keys.tick(mc); infinitylink.mc.voice.VoiceClient.tick(mc); }

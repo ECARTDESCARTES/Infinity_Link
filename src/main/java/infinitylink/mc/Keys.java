@@ -12,16 +12,16 @@ import java.util.Map;
 
 /** Touches d'InfinityLink 1.1.2, réglables dans Options > Commandes (enregistrées dans options.txt comme les touches
  *  vanilla, OptionsMixin) : chat vocal façon Simple Voice Chat et raccourcis du mod. Codes = scancodes SDL3 de 26.3
- *  (InputConstants.KEY_*), AUCUNE = sans touche par défaut (InputConstants.UNKNOWN, valeur 0 : jamais -1, que
- *  KeyMapping.setAll passerait à InputConstants.isKeyDown et qui ferait planter le jeu à la reprise du focus). Libellés FR/EN fournis par ClientLanguageMixin. */
+ *  (InputConstants.KEY_*), AUCUNE = sans touche par défaut. Libellés FR/EN fournis par ClientLanguageMixin.
+ *  1.1.4 : « sans touche » est InputConstants.UNKNOWN (scancode 0 en 26.3 et 26.4), jamais -1 : une touche -1
+ *  (« key.keyboard.-1 » dans options.txt) fait lever KeyMapping.setAll (isKeyDown(-1)) quand la souris est capturée. */
 public final class Keys {
     private Keys() {}
 
     public static final KeyMapping.Category VOIX = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("infinitylink", "voix"));
     public static final KeyMapping.Category GENERAL = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("infinitylink", "general"));
 
-    /** « Sans touche » : la valeur de InputConstants.UNKNOWN (0 en 26.x), seule valeur que KeyMapping ignore. */
-    public static final int AUCUNE = InputConstants.UNKNOWN.getValue();
+    static final int AUCUNE = InputConstants.UNKNOWN.getValue();
 
     private static KeyMapping k(String id, int code, KeyMapping.Category c) {
         return new KeyMapping("key.infinitylink." + id, InputConstants.Type.KEYBOARD, code, c);

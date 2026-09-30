@@ -116,7 +116,7 @@ def main():
         (d/'infinitylink/core').mkdir(parents=True,exist_ok=True)
         (d/'infinitylink/core/version.txt').write_text(version.split('+')[0])
     quick='--quick' in sys.argv
-    pure=['CodecTest','TabsCodecTest','AssetsCodecTest','AssetsClientTest','LodMesherTest','LodPoolTest','BlocksViewTest','Armures3dTest','FormesTest','VoiceTest','ScenesTest']
+    pure=['CodecTest','TabsCodecTest','AssetsCodecTest','AssetsClientTest','LodMesherTest','LodPoolTest','BlocksViewTest','Armures3dTest','FormesTest','VoiceTest','ScenesTest','ModelCollisionsTest']
     compile_java(list((SRC/'infinitylink/core').rglob('*.java'))+[TESTDIR/(n+'.java') for n in pure],tests,cp)
     for name in (['BlocksViewTest'] if quick else pure): run([JDK/'bin/java.exe','-Dstdout.encoding=UTF-8','-cp',tests,name])
     if os.environ.get('LOD_REPLAY'):
@@ -124,7 +124,7 @@ def main():
         run([JDK/'bin/java.exe','-Xmx2g','-Dstdout.encoding=UTF-8','-cp',tests,'LodReplayTest',os.environ['LOD_REPLAY']])
     if not quick: targets()
     compile_java(list(SRC.rglob('*.java')),classes,cp)
-    full=cp+os.pathsep+str(classes)+os.pathsep+str(tests)
+    full=cp+os.pathsep+str(classes)+os.pathsep+str(tests)+os.pathsep+str(RES)
     compile_java([TESTDIR/'TabsE2E.java',TESTDIR/'BlocksMinecraftCodecTest.java',TESTDIR/'BlocksMixinLauncher.java'],tests,full)
     for name,args in ([] if quick else [('TabsE2E',['test/ref'])]):
         run([JDK/'bin/java.exe','-Xmx2g','-Dstdout.encoding=UTF-8','-Dstderr.encoding=UTF-8','-cp',full,name]+args)

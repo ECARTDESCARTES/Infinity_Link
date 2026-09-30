@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "infinitylink:item/bbmodel/lucarne_zinc_oeil_de_boeuf"
+  }
+}
